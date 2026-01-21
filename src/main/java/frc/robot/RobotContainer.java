@@ -25,7 +25,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Swerve;
 
 
 public class RobotContainer {
@@ -36,8 +36,8 @@ public class RobotContainer {
 private final SendableChooser<Command> autoChooser;
 
 
-APTarget ApReefF = new APTarget(TunerConstants.POSES.REEF_F)
-  .withEntryAngle(Rotation2d.kZero);
+// APTarget ApReefF = new APTarget(TunerConstants.POSES.REEF_F)
+//   .withEntryAngle(Rotation2d.kZero);
 
 
 public RobotContainer() {
@@ -55,9 +55,8 @@ public RobotContainer() {
 }
     
 
-    public final static CommandXboxController operatorPad = new CommandXboxController(1);
+    public final static CommandXboxController driverPad = new CommandXboxController(0);
 
-    public final static CommandXboxController PitPad = new CommandXboxController(2);
 
 
 
@@ -81,7 +80,7 @@ public RobotContainer() {
 
 
 
-    public final static CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    public final Swerve drivetrain = TunerConstants.createDrivetrain();
   
 
 
@@ -107,14 +106,14 @@ public RobotContainer() {
 //Driver pad 
 
 
-        // drivetrain.setDefaultCommand(
-        //     // Drivetrain will execute this command periodically
-        //     drivetrain.applyRequest(() ->
-        //     drive.withVelocityX(-driverPad.interpolatedLeftYAxis() * MaxSpeed) // Drive forward with negative Y (forward)
-        //     .withVelocityY(-driverPad.interpolatedLeftXAxis() * MaxSpeed) // Drive left with negative X (left)
-        //     .withRotationalRate(driverPad.interpolatedRightXAxis() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-        //     )
-        // );
+        drivetrain.setDefaultCommand(
+            // Drivetrain will execute this command periodically
+            drivetrain.applyRequest(() ->
+            drive.withVelocityX(-driverPad.interpolatedLeftYAxis() * MaxSpeed) // Drive forward with negative Y (forward)
+            .withVelocityY(-driverPad.interpolatedLeftXAxis() * MaxSpeed) // Drive left with negative X (left)
+            .withRotationalRate(driverPad.interpolatedRightXAxis() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+            )
+        );
 
       
 
