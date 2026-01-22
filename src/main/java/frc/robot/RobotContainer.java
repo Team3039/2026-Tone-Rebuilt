@@ -45,7 +45,6 @@ public RobotContainer() {
 
 
 
-
      autoChooser = AutoBuilder.buildAutoChooser(); //Auto chooser
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
@@ -57,7 +56,7 @@ public RobotContainer() {
 
     public final static CommandXboxController driverPad = new CommandXboxController(0);
 
-
+    public final Swerve drivetrain = TunerConstants.createDrivetrain();
 
 
 
@@ -80,7 +79,6 @@ public RobotContainer() {
 
 
 
-    public final Swerve drivetrain = TunerConstants.createDrivetrain();
   
 
 
@@ -109,9 +107,9 @@ public RobotContainer() {
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-            drive.withVelocityX(-driverPad.interpolatedLeftYAxis() * MaxSpeed) // Drive forward with negative Y (forward)
-            .withVelocityY(-driverPad.interpolatedLeftXAxis() * MaxSpeed) // Drive left with negative X (left)
-            .withRotationalRate(driverPad.interpolatedRightXAxis() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+            drive.withVelocityX(-driverPad.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+            .withVelocityY(-driverPad.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+            .withRotationalRate(-driverPad.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
 
