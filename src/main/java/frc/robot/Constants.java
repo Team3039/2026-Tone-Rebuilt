@@ -5,11 +5,13 @@ package frc.robot;
 public class Constants {
 
     public static final class Ports {
-
+//CLAW
     public static final int INTAKE = 1;
+    public static final int Indexer = 2;
+    public static final int INDEXERCANRANGE = 3;
 
 
-
+//INDEXERCANRANGE
     //dio ports
     public static final int INTAKE_ENCODER = 9;
 
