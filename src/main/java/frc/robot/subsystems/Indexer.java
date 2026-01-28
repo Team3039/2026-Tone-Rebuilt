@@ -39,7 +39,7 @@ public class Indexer extends SubsystemBase {
 
 
   // Create a talonfx for the claw
-  TalonFX claw = new TalonFX(Constants.Ports.Indexer);
+  TalonFX claw = new TalonFX(Constants.Ports.INDEXER);
 
   // This CANrange is used to detect coral in the intake
   CANrange INDEXERCANRANGE = new CANrange(Constants.Ports.INDEXERCANRANGE);

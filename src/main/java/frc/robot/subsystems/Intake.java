@@ -97,18 +97,6 @@ public class Intake extends SubsystemBase {
     intakeState = state;
   }
 
-
-  /**
-   * Set the position of the wrist to setpointWrist using PID and Feedforward.
-   * <p>
-   * It will first calculate the pid output, clamping it between -.2 and .2.
-   * <p>
-   * For the gravity feedforward, it multiplies the KG constant by the cosine of the wrist angle.
-   * <p>
-   * Finally, it adds the KS constant to the output.
-   * <p>
-   * This result is the percent output that will be assigned to the wrist
-   */
   public void setIntakePosition() {
     double output = 0;
     output = MathUtil.clamp(controller.calculate(getWristPosition(), setpointIntake), -.2, .3);
@@ -179,7 +167,6 @@ public class Intake extends SubsystemBase {
 
   /**
    * Check if the wrist is at the setpoint within a given tolerance
-   * heres the thing
    * @param tolerance the tolerance to check if the wrist is at the setpoint
    * @return true if the wrist is at the setpoint within the tolerance, false otherwise
    */
