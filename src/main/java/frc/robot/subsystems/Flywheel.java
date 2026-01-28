@@ -56,9 +56,9 @@ public class Flywheel extends SubsystemBase {
 		shooterRight.setNeutralMode(NeutralModeValue.Coast);
 
 		Slot0Configs configs = new Slot0Configs()
-				.withKP(Constants.Flywheel.FLYWHEEL_KP)
-				.withKI(Constants.Flywheel.FLYWHEEL_KI)
-				.withKD(Constants.Flywheel.FLYWHEEL_KD);
+				.withKP(Constants.Flywheel.Flywheel_KP)
+				.withKI(Constants.Flywheel.Flywheel_KI)
+				.withKD(Constants.Flywheel.Flywheel_KD);
 
 		shooterLeft.getConfigurator().apply(configs);
 		shooterLeft.getConfigurator().apply(currentLimit);
@@ -95,7 +95,7 @@ public class Flywheel extends SubsystemBase {
 	}
 
 	public void setShooterVelocity(double RPS) {
-		shooterLeft.setControl(voltageLeft.withVelocity(RPS).withFeedForward(Constants.flywheel.SHOOTER_FF));
+		shooterLeft.setControl(voltageLeft.withVelocity(RPS).withFeedForward(Constants.Flywheel.Flywheel_FF));
 	}
 
 	public boolean isAtVelocitySetpoint(){

@@ -50,15 +50,11 @@ public class Constants {
 
     }
      public static final class Flywheel {
-        public static final double FLYWHEEL_KP = 0.009;
-        public static final double FLYWHEEL_KI = 0;
-        public static final double FLYWHEEL_KD = 0.0000;
-        public static final double FLYWHEEL_KS = 0.0001;
-        public static final double FLYWHEEL_KG = 0;
-        public static final double FLYWHEEL_KV = 0;
-        public static final double FLYWHEEL_MAX_VEL = .0;
-        public static final double FLYWHEEL_MAX_ACCEL = .00;
-        public static final double FLYWHEEL_OFFSET = 0;
+      public static final double Flywheel_KP = 0.12;
+		public static final double Flywheel_KI = 0.000;
+		public static final double Flywheel_KD = 0.000;
+        public static final double Flywheel_FF = 1.75;
+
 
     }
        
