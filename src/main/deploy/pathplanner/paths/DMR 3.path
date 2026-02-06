@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.7258,
+        "y": 5.586977777777778
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.564555555555556,
+        "y": 7.773855555555556
+      },
+      "isLocked": false,
+      "linkedName": "dmr2"
+    },
+    {
+      "anchor": {
+        "x": 4.017177777777778,
+        "y": 7.370744444444444
+      },
+      "prevControl": {
+        "x": 4.813322222222222,
+        "y": 7.431211111111112
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "dmr3"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 3.0,
+    "rotation": -178.45184230102208
+  },
+  "reversed": false,
+  "folder": "Depo side mid run",
+  "idealStartingState": {
+    "velocity": 0.0,
+    "rotation": 90.0
+  },
+  "useDefaultConstraints": true
+}

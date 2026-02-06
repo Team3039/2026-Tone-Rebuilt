@@ -31,13 +31,12 @@ import frc.robot.subsystems.Swerve;
 public class RobotContainer {
   
 
-// private static final Logger logger = Logger.getLogger(RobotContainer.class.getName());
 
+    
 private final SendableChooser<Command> autoChooser;
 
 
-// APTarget ApReefF = new APTarget(TunerConstants.POSES.REEF_F)
-//   .withEntryAngle(Rotation2d.kZero);
+
 
 
 public RobotContainer() {
@@ -113,7 +112,7 @@ public RobotContainer() {
             )
         );
 
-      
+      driverPad.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
     }
 

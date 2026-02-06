@@ -33,7 +33,6 @@ public class Flywheel extends SubsystemBase {
 		CLOSESHOT,
 		MANUAL,
 		AMP,
-		SOURCE,
 		FEEDING,
 		CLIMBING
 	}
@@ -67,8 +66,8 @@ public class Flywheel extends SubsystemBase {
 
 
 // this does not work, I dont know why I will fix later
-		shooterLeft.setInverted(true);
-		shooterRight.setInverted(false);
+		// shooterLeft.setInverted(true);
+		// shooterRight.setInverted(false);
 
 
 
@@ -115,11 +114,9 @@ public class Flywheel extends SubsystemBase {
 
 	
 
-		// SmartDashboard.putNumber("Amper Setpoint", getSetpointAmp());
-
-		// if (RobotState.isTeleop() && RobotState.isEnabled() && Vision.getDistanceToSpeaker() < 8){
-		// 	shooterState = ShooterState.PASSIVE;
-		// }
+		
+		
+		
 
 		switch (flywheelState) {
 			case IDLE:
@@ -129,24 +126,21 @@ public class Flywheel extends SubsystemBase {
 				break;
 			case CLOSESHOT:
 
-                                                                            // I will add get distance to hub later
-				  if(DriverStation.getAlliance().isPresent() && Limelight.getDistanceToHub() < 2.2){
-					targetVelocity = 75;
-					setShooterVelocity(150);
-						}
-				  else{
+                                                                        // I will add get distance to hub later
+				//   if(DriverStation.getAlliance().isPresent() && Limelight.getDistanceToHub() < 2.2){
+				// 	targetVelocity = 75;
+				// 	setShooterVelocity(150);
+				// 		}
+				//   else{
 				targetVelocity = 80;
 				setShooterVelocity(150);	
-			}
+			
 				
 				break;
 			
 			case CLIMBING:
 				setWheelSpeed(0);
                 break;
-			case SOURCE:
-				setShooterVelocity(-100);            
-				break;
 
 			case FEEDING:
 			setShooterVelocity(35);

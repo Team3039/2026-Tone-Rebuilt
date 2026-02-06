@@ -7,10 +7,7 @@ import java.util.function.Supplier;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
-import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
-import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
@@ -23,8 +20,6 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -61,8 +56,8 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
 
     /* Swerve requests to apply during SysId characterization */
     private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
-   
-    public SwerveDriveOdometry m_simOdometry = null;
+    private final SwerveRequest.SysIdSwerveSteerGains m_steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
+    private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
 
     /* SysId routine for characterizing translation. This is used to find PID gains for the drive motors. */
     private final SysIdRoutine m_sysIdRoutineTranslation = new SysIdRoutine(
@@ -81,14 +76,47 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
     );
 
     /* SysId routine for characterizing steer. This is used to find PID gains for the steer motors. */
-
+    private final SysIdRoutine m_sysIdRoutineSteer = new SysIdRoutine(
+        new SysIdRoutine.Config(
+            null,        // Use default ramp rate (1 V/s)
+            Volts.of(7), // Use dynamic voltage of 7 V
+            null,        // Use default timeout (10 s)
+            // Log state with SignalLogger class
+            state -> SignalLogger.writeString("SysIdSteer_State", state.toString())
+        ),
+        new SysIdRoutine.Mechanism(
+            volts -> setControl(m_steerCharacterization.withVolts(volts)),
+            null,
+            this
+        )
+    );
 
     /*
      * SysId routine for characterizing rotation.
      * This is used to find PID gains for the FieldCentricFacingAngle HeadingController.
      * See the documentation of SwerveRequest.SysIdSwerveRotation for info on importing the log to SysId.
      */
-
+    private final SysIdRoutine m_sysIdRoutineRotation = new SysIdRoutine(
+        new SysIdRoutine.Config(
+            /* This is in radians per second², but SysId only supports "volts per second" */
+            Volts.of(Math.PI / 6).per(Second),
+            /* This is in radians per second, but SysId only supports "volts" */
+            Volts.of(Math.PI),
+            null, // Use default timeout (10 s)
+            // Log state with SignalLogger class
+            state -> SignalLogger.writeString("SysIdRotation_State", state.toString())
+        ),
+        new SysIdRoutine.Mechanism(
+            output -> {
+                /* output is actually radians per second, but SysId only supports "volts" */
+                setControl(m_rotationCharacterization.withRotationalRate(output.in(Volts)));
+                /* also log the requested output for SysId */
+                SignalLogger.writeDouble("Rotational_Rate", output.in(Volts));
+            },
+            null,
+            this
+        )
+    );
 
     /* The SysId routine to test */
     private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineTranslation;
@@ -254,26 +282,8 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
         }
     }
 
-    @Override
-    public void resetPose(Pose2d pose) {
-        super.resetPose(pose);
-
-        if(m_simOdometry != null) {
-            m_simOdometry.resetPose(pose);
-        }
-    }
-
     private void startSimThread() {
         m_lastSimTime = Utils.getCurrentTimeSeconds();
-
-        if (m_simOdometry == null) {
-            SwerveModule<TalonFX, TalonFX, CANcoder>[] modules = getModules();
-            SwerveModulePosition[] positions = new SwerveModulePosition[modules.length];
-            for(int i = 0; i < modules.length; ++i) {
-                positions[i] = modules[i].getCachedPosition();
-            }
-            m_simOdometry = new SwerveDriveOdometry(getKinematics(), Rotation2d.kZero, positions);
-        }
 
         /* Run simulation at a faster rate so PID gains behave more reasonably */
         m_simNotifier = new Notifier(() -> {
@@ -283,13 +293,6 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
 
             /* use the measured time delta, get battery voltage from WPILib */
             updateSimState(deltaTime, RobotController.getBatteryVoltage());
-            
-            SwerveModule<TalonFX, TalonFX, CANcoder>[] modules = getModules();
-            SwerveModulePosition[] positions = new SwerveModulePosition[modules.length];
-            for(int i = 0; i < modules.length; ++i) {
-                positions[i] = modules[i].getCachedPosition();
-            }
-            m_simOdometry.update(Rotation2d.fromDegrees(getPigeon2().getYaw().getValue().in(Degrees)), positions);
         });
         m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
@@ -301,10 +304,7 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
      * @param visionRobotPoseMeters The pose of the robot as measured by the vision camera.
      * @param timestampSeconds The timestamp of the vision measurement in seconds.
      */
-    @Override
-    public void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds) {
-        super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds));
-    }
+
 
     /**
      * Adds a vision measurement to the Kalman Filter. This will correct the odometry pose estimate
