@@ -22,6 +22,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -44,6 +45,10 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
     private static final double kSimLoopPeriod = 0.004; // 4 ms
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
+
+
+     public static final Pose2d HubPose = new Pose2d(4.633, 4.040, Rotation2d.fromDegrees(0));
+     static double targetYaw;
 
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
@@ -200,12 +205,50 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
      * @return Command to run
      */
 
+
+
+     public double getRotationToHub() {
+
+        targetYaw = Math.atan2(
+         
+            HubPose.getY() - getState().Pose.getY(),
+            HubPose.getX() - getState().Pose.getX()
+        );
+        return targetYaw;
+    }
+
+    public Command pointAtHubCommand(Supplier<Double> vxSupplier, Supplier<Double> vySupplier) {
+        var pid = new edu.wpi.first.math.controller.PIDController(4.0, 0.0, 0.0);
+        pid.enableContinuousInput(-Math.PI, Math.PI);
+        pid.setTolerance(Math.toRadians(.10));
+
+        return new edu.wpi.first.wpilibj2.command.PIDCommand(
+            pid,
+            () -> getState().Pose.getRotation().getRadians(),
+            this::getRotationToHub,
+            output -> {
+                final double kMaxOmega = 6.0;
+                double omega = Math.max(-kMaxOmega, Math.min(kMaxOmega, output));
+                double vx = vxSupplier.get();
+                double vy = vySupplier.get();
+                setControl(m_pathApplyRobotSpeeds.withSpeeds(new ChassisSpeeds(vx, vy, omega)));
+            },
+            this
+        )
+        .until(() -> pid.atSetpoint())
+        .andThen(() -> setControl(m_pathApplyRobotSpeeds.withSpeeds(new ChassisSpeeds(0.0, 0.0, 0.0))), this);
+    }
+
+
+
+
+
     @Override
     public void periodic() {
 
 
-
-SmartDashboard.putNumberArray("Swerve Pose", new double[] {getState().Pose.getX(), getState().Pose.getY(), getState().Pose.getRotation().getRadians()});
+    SmartDashboard.putNumber("Rotation", Units.radiansToDegrees(getRotationToHub()));
+    SmartDashboard.putNumberArray("Swerve Pose", new double[] {getState().Pose.getX(), getState().Pose.getY(), getState().Pose.getRotation().getRadians()});
 
 
 

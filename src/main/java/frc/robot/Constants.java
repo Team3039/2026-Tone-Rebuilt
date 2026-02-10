@@ -1,8 +1,27 @@
 package frc.robot;
 
-
+import com.therekrab.autopilot.APConstraints;
+import com.therekrab.autopilot.APProfile;
+import com.therekrab.autopilot.Autopilot;
+import static edu.wpi.first.units.Units.Centimeters;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Inches;
 
 public class Constants {
+
+
+  public static final APConstraints kConstraints = new APConstraints()
+            .withAcceleration(5.0)
+            .withJerk(5);
+
+    public static final APProfile kProfile = new APProfile(kConstraints)
+            .withErrorXY(Centimeters.of(1.5))
+            .withErrorTheta(Degrees.of(3))
+            .withBeelineRadius(Centimeters.of(8));
+
+    public static final Autopilot kAutopilot = new Autopilot(kProfile);
+
+
 
     public static final class Ports {
 //CLAW
@@ -17,6 +36,7 @@ public class Constants {
 //INDEXERCANRANGE
     //dio ports
     public static final int INTAKE_ENCODER = 9;
+
 
 
 
