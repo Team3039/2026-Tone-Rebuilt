@@ -3,11 +3,22 @@ package frc.robot;
 import com.therekrab.autopilot.APConstraints;
 import com.therekrab.autopilot.APProfile;
 import com.therekrab.autopilot.Autopilot;
+
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.util.Units;
+
 import static edu.wpi.first.units.Units.Centimeters;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 
 public class Constants {
+
+    private static final double wheelBase = 0.5; // Define the wheelBase (example value)
+    private static final double trackWidth = 0.5; // Define the trackWidth (example value)
+    public static final double kDriveGearRatio = 5.357142857142857;
+    public static final double wheelCircumference = Units.inchesToMeters(4 * Math.PI);
+
 
 
   public static final APConstraints kConstraints = new APConstraints()
@@ -21,6 +32,13 @@ public class Constants {
 
     public static final Autopilot kAutopilot = new Autopilot(kProfile);
 
+
+
+public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
+            new Translation2d(wheelBase / 2.0, trackWidth / 2.0),
+            new Translation2d(wheelBase / 2.0, -trackWidth / 2.0),
+            new Translation2d(-wheelBase / 2.0, trackWidth / 2.0),
+            new Translation2d(-wheelBase / 2.0, -trackWidth / 2.0));
 
 
     public static final class Ports {

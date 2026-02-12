@@ -119,7 +119,7 @@ public RobotContainer() {
       driverPad.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
       driverPad.y().onTrue(drivetrain.runOnce(() -> drivetrain.resetPose(new Pose2d(1.567, 3.761, Rotation2d.fromDegrees(0)))));
 
-      driverPad.b().whileTrue(drivetrain.pointAtHubCommand(() -> -driverPad.getLeftY() * MaxSpeed, () -> -driverPad.getLeftX() * MaxSpeed));
+    //   driverPad.b().whileTrue(drivetrain.pointAtHubComm5and(() -> -driverPad.getLeftY() * MaxSpeed, () -> -driverPad.getLeftX() * MaxSpeed));
     }
 
     public Command getAutonomousCommand() {
