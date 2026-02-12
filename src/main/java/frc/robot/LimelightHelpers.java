@@ -7,6 +7,8 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.TimestampedDoubleArray;
+import frc.robot.LimelightHelpers.LimelightResults;
+import frc.robot.LimelightHelpers.PoseEstimate;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -1583,15 +1585,5 @@ public class LimelightHelpers {
         }
 
         return results;
-    }
-
-    public static PoseEstimate getBotPoseEstimate_MultiTag(String camera, int i) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getBotPoseEstimate_MultiTag'");
-    }
-
-    public static PoseEstimate getBotPoseEstimate_megaTAg1(String camera) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getBotPoseEstimate_megaTAg1'");
     }
 }

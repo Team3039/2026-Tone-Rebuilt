@@ -57,9 +57,10 @@ import frc.robot.TunerConstants.TunerSwerveDrivetrain;
  */
 public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
 
-    private static final double kSimLoopPeriod = 0.005; // 5 ms
-    private Notifier m_simNotifier = null;
-    private double m_lastSimTime;
+  
+
+    public static final Pose2d HubPose = new Pose2d(4.633, 4.040, Rotation2d.fromDegrees(0));
+     static double targetYaw;
 
     public SwerveDrivePoseEstimator m_poseEstimator;
     public LimelightHelpers.PoseEstimate mt2;
@@ -240,11 +241,10 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
         double rightAmbiguity = 0;
 
 
-        cameraPoses[0] = grabPose("limelight-front");
-       cameraPoses[1] = grabPose("limelight-back");
+        cameraPoses[1] = grabPose("limelight-front");
+       cameraPoses[0] = grabPose("limelight-back");
 
-//left
-//limelight-right
+
 
         if (cameraPoses[0] == null && cameraPoses[1] == null) {
             bestCamera = -1;
@@ -295,6 +295,29 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
 
     
 
+    
+
+
+
+
+    public double getRotationToHub() {
+
+        targetYaw = Math.atan2(
+         
+            HubPose.getY() - getPose().getY(),
+            HubPose.getX() - getPose().getX()
+        );
+        return targetYaw;
+    }
+
+
+    public double getDistanceToHub() {
+        return Math.hypot(
+            HubPose.getX() - getPose().getX(),
+            HubPose.getY() - getPose().getY()
+        );
+    }
+
     @Override
     public void periodic() {
 
@@ -304,18 +327,15 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
 
         updateCameraPose();
 
-        //resetOdometry(botPose2d);
-        /*
-         * This allows us to correct the perspective in case the robot code restarts
-         * mid-match.
-         * Otherwise, only check and apply the operator perspective if the DS is
-         * disabled.
-         * This ensures driving behavior doesn't change until an explicit disable event
-         * occurs during testing.
-         */
+        
+
+            // SmartDashboard.putNumberArray("CameraPose", new double[] { cameraPoses[bestCamera].pose.getTranslation().getX(), cameraPoses[bestCamera].pose.getTranslation().getY(),
+            //     cameraPoses[bestCamera].pose.getRotation().getRadians() });
+            SmartDashboard.putNumberArray("bot Pose", new double[] {getPose().getX(), getPose().getY(), getPose().getRotation().getRadians()});
+            
+            SmartDashboard.putNumber("DistanceToHub", getDistanceToHub());
 
 
-SmartDashboard.putNumberArray("Swerve Pose", new double[] {getState().Pose.getX(), getState().Pose.getY(), getState().Pose.getRotation().getRadians()});
 
        
     }
@@ -390,11 +410,11 @@ SmartDashboard.putNumberArray("Swerve Pose", new double[] {getState().Pose.getX(
     }
 
     public PoseEstimate grabPose(String camera) {
- LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+ LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-front");
         // LimelightHelpers.SetRobotOrientation("limelight-left",getGyroYaw().getDegrees(),
         // 0, 0, 0, 0, 0);
 
-        mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(camera);
+        mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(camera);
         return mt1;
 
     }
