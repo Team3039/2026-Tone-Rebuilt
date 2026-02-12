@@ -6,14 +6,15 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Volts;
 
+import com.pathplanner.lib.pathfinding.LocalADStar;
+import com.pathplanner.lib.pathfinding.Pathfinding;
+
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import com.pathplanner.lib.pathfinding.LocalADStar;
-import com.pathplanner.lib.pathfinding.Pathfinding;
-import frc.robot.TunerConstants;
 
 
 /**
@@ -26,6 +27,8 @@ public class Robot extends TimedRobot {
     
     private Command m_autonomousCommand;
     private final RobotContainer m_robotContainer;
+    //  private final boolean kUseLimelight = ;
+
 
     
     
@@ -46,7 +49,28 @@ public class Robot extends TimedRobot {
         SmartDashboard.putData(CommandScheduler.getInstance());
         RobotController.setBrownoutVoltage(Volts.of(6.1));
     }
-    
+
+ @Override
+    public void robotPeriodic() {
+    //   if (kUseLimelight) {
+    //         var driveState = m_robotContainer.drivetrain.getState();
+    //         double headingDeg = driveState.Pose.getRotation().getDegrees();
+    //         double omegaRps = Units.radiansToRotations(driveState.Speeds.omegaRadiansPerSecond);
+
+    //         LimelightHelpers.SetRobotOrientation("limelight-front", headingDeg, 0, 0, 0, 0, 0);
+    //         var llMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-front");
+    //         if (llMeasurement != null && llMeasurement.tagCount > 0 && Math.abs(omegaRps) < 2.0) {
+    //             m_robotContainer.drivetrain.addVisionMeasurement(llMeasurement.pose, llMeasurement.timestampSeconds);
+           
+    //      }
+
+    // }
+
+     CommandScheduler.getInstance().run();
+
+
+    }
+
        @Override
     public void disabledInit() {}
 
@@ -79,14 +103,14 @@ public class Robot extends TimedRobot {
     }
 
     @Override
-    public void teleopPeriodic() {}
+    public void teleopPeriodic() {
 
-    @Override
-    public void robotPeriodic() {
-        // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
-        // commands, running already-scheduled commands, removing finished or interrupted commands,
-        // and running subsystem periodic() methods.  This must be called from the robot's periodic
-        // block in order for anything in the Command-based framework to work.
-        CommandScheduler.getInstance().run();
+
+
+
+
+
     }
+
+    
 }

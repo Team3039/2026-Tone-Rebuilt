@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 7.625022222222222,
-        "y": 7.038177777777778
+        "x": 7.7535587188612105,
+        "y": 6.719418742586003
       },
       "prevControl": {
-        "x": 7.504147800525287,
-        "y": 7.672768491686697
+        "x": 7.632684297164275,
+        "y": 7.354009456494921
       },
       "nextControl": null,
       "isLocked": false,
@@ -47,13 +47,13 @@
   },
   "goalEndState": {
     "velocity": 1.0,
-    "rotation": 95.61758059012682
+    "rotation": 92.43664824681002
   },
   "reversed": false,
   "folder": "Depo side mid run",
   "idealStartingState": {
     "velocity": 0.0,
-    "rotation": 178.21008939175388
+    "rotation": -179.85745060191672
   },
   "useDefaultConstraints": true
 }
