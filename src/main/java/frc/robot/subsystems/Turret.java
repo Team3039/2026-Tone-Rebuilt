@@ -103,9 +103,6 @@ public class Turret extends SubsystemBase {
 		double output = 0;
 
 
-		
-
-
 		if(Turret.getPosition().getValueAsDouble() < 8){
 			output = MathUtil.clamp(controller.calculate(Turret.getPosition().getValueAsDouble(), setpointElevator * -1),
 					-.18, .25) +

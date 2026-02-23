@@ -183,7 +183,7 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
             var config = RobotConfig.fromGUISettings();
             AutoBuilder.configure(
                     () ->  getPose(),/// getState().Pose, // Supplier of current robot pose
-                    this::resetPose, // Consumer for seeding pose against auto
+                    this::resetOdometry, // Consumer for seeding pose against auto
                     () -> getState().Speeds, // Supplier of current robot speeds
                     // Consumer of ChassisSpeeds and feedforwards to drive the robot
                     (speeds, feedforwards) -> setControl(
@@ -332,7 +332,7 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
             // SmartDashboard.putNumberArray("CameraPose", new double[] { cameraPoses[bestCamera].pose.getTranslation().getX(), cameraPoses[bestCamera].pose.getTranslation().getY(),
             //     cameraPoses[bestCamera].pose.getRotation().getRadians() });
             SmartDashboard.putNumberArray("bot Pose", new double[] {getPose().getX(), getPose().getY(), getPose().getRotation().getRadians()});
-            
+
             SmartDashboard.putNumber("DistanceToHub", getDistanceToHub());
 
 
