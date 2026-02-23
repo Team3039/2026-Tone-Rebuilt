@@ -50,9 +50,9 @@ public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKine
     public static final int FLYWHEEL_LEFT = 5;
     public static final int FLYWHEEL_RIGHT = 6;
     public static final int CANdleID = 13;
-
+    public static final int INTAKE_ROLLER = 7;
     
-
+//INTAKE_ROLLER
 //TURRET
 //INDEXERCANRANGE
     //dio ports

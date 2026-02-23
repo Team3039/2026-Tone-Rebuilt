@@ -8,15 +8,15 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotContainer;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 
 public class Turret extends SubsystemBase {
 
@@ -49,7 +49,7 @@ public class Turret extends SubsystemBase {
 
 	// Create a variable to store the setpoint of the elevator in kraken encoder
 	// ticks
-	public static double setpointElevator = 0;
+	public static double setpointElevator  = 0;
 
 	// Turret Constructor
 	public Turret() {
@@ -136,7 +136,7 @@ public class Turret extends SubsystemBase {
 	 * @return the current angle of the turret in kraken ticks
 	 */
 	public double getTurretPosition() {
-		return Turret.getPosition().getValueAsDouble() * -1;
+		return Turret.getPosition().getValueAsDouble();
 	}
 
 	/**

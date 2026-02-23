@@ -76,7 +76,6 @@ public class Robot extends TimedRobot {
        @Override
     public void disabledInit() {
 
-            Candle.startRainbow();
 
     }
 
@@ -105,6 +104,10 @@ public class Robot extends TimedRobot {
     public void teleopInit() {
 
  
+
+                  Candle.startRainbow();
+
+
         if (m_autonomousCommand != null) {
             CommandScheduler.getInstance().cancel(m_autonomousCommand);
         }

@@ -37,10 +37,8 @@ public class Candle extends SubsystemBase {
             config.brightnessScalar = .8; // dim the LEDs to 8/10 brightness
             light.configAllSettings(config);
     
-            // for (int module = 0; module < 3; module++) {
-            //     show.addInstrument(RobotContainer.drivetrain.getModule(module).getDriveMotor());
-            //     show.addInstrument(RobotContainer.drivetrain.getModule(module).getSteerMotor());
-            // }
+            
+            
         }
     
         public void setState(LightShowState state) {
@@ -93,7 +91,7 @@ public class Candle extends SubsystemBase {
         // This method will be called once per scheduler run
 
       
-        lightGreen();
+        // lightGreen();
 
 
             //    if (Ro) {

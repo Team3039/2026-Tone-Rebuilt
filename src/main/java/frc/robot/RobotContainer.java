@@ -57,6 +57,7 @@ public RobotContainer() {
     
 
     public final static CommandXboxController driverPad = new CommandXboxController(0);
+    public final static CommandXboxController guitar = new CommandXboxController(1);
 
     public final Swerve drivetrain = TunerConstants.createDrivetrain();
 
@@ -121,6 +122,7 @@ public RobotContainer() {
 
       driverPad.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
       driverPad.y().onTrue(drivetrain.runOnce(() -> drivetrain.resetPose(new Pose2d(1.567, 3.761, Rotation2d.fromDegrees(0)))));
+      guitar.y().onTrue(drivetrain.runOnce(() -> drivetrain.resetPose(new Pose2d(1.567, 3.761, Rotation2d.fromDegrees(0)))));
 
     //   driverPad.b().whileTrue(drivetrain.pointAtHubComm5and(() -> -driverPad.getLeftY() * MaxSpeed, () -> -driverPad.getLeftX() * MaxSpeed));
     }
