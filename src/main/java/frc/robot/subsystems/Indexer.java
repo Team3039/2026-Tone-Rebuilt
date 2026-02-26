@@ -23,7 +23,7 @@ import frc.robot.Constants;
 public class Indexer extends SubsystemBase {
 
 
-  // Create the possible states of the claw
+  // Create the possible states of the indexer
   public enum IndexerState {
     IDLE,
     PASSIVE,
@@ -31,63 +31,69 @@ public class Indexer extends SubsystemBase {
     TUHUA,
   }
 
-  // Create a variable to store the current state of the claw
+  // Create a variable to store the current state of the indexer
   IndexerState indexerState = IndexerState.IDLE;
 
   // Keep track of whether or not the intake has a coral
   public boolean hasFuel = false;
 
 
-  // Create a talonfx for the claw
-  TalonFX claw = new TalonFX(Constants.Ports.INDEXER);
+  // Create a talonfx for the indexer
+  TalonFX indexer = new TalonFX(Constants.Ports.INDEXER);
+  TalonFX kicker = new TalonFX(Constants.Ports.KICKER);
+
 
   // This CANrange is used to detect coral in the intake
   CANrange INDEXERCANRANGE = new CANrange(Constants.Ports.INDEXERCANRANGE);
 
 
-  // Claw Constructor
+  // Indexer Constructor
   public Indexer() {
 
     // Create a talonfx configurator.
-    TalonFXConfiguration IndexerConfig = new TalonFXConfiguration();
+    TalonFXConfiguration indexerConfig = new TalonFXConfiguration();
 
     // Inverted and Neutral Modes
-    IndexerConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    IndexerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    indexerConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    indexerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    // Apply the configurator to the claw motor
-    claw.getConfigurator().apply(IndexerConfig);
+    // Apply the configurator to the indexer motor
+    indexer.getConfigurator().apply(indexerConfig);
 
   }
     // Create a CANrange configurator
 
   /**
-   * Get the current state of the claw
+   * Get the current state of the indexer
    * 
-   * @return the current state of the claw as a ClawState
+   * @return the current state of the indexer as a IndexerState
    */
   public IndexerState getState() {
     return indexerState;
   }
   
   /**
-   * Set the state of the claw
+   * Set the state of the indexer
    * 
-   * @param state the state to set the claw to
+   * @param state the state to set the indexer to
    */
   public void setState(IndexerState state) {
     indexerState = state;
   }
 
   /**
-   * Set the speed of the claw
+   * Set the speed of the indexer
    * <p>
    * Positive values will intake algae, negative values will intake coral
    * 
-   * @param speed the speed to set the claw to (-1 to 1)
+   * @param speed the speed to set the indexer to (-1 to 1)
    */
-  public void setWheelSpeed(double speed) {
-    claw.set(speed);
+  public void setindexerSpeed(double speed) {
+    indexer.set(speed);
+  }
+
+  public void setkickerSpeed(double speed) {
+    kicker.set(speed);
   }
 
   
@@ -107,11 +113,11 @@ public class Indexer extends SubsystemBase {
   }
 
   /**
-   * Check to see if the claw is aligned with the branch.
+   * Check to see if the indexer is aligned with the branch.
    * It does this by checking the distance detected by the branchCANRange.
    * If it detects an object closer than 0.5 meters, it is likely the branch, and thus we are aligned.
    * 
-   * @return true if the claw is aligned with the branch, false otherwise
+   * @return true if the indexer is aligned with the branch, false otherwise
    */
   
 
@@ -121,53 +127,49 @@ public class Indexer extends SubsystemBase {
   @Override
   public void periodic() {
     // SmartDashboard.putNumber("CanRange Distance Detected", branchCANRange.getDistance().getValueAsDouble());
-    SmartDashboard.putNumber("Claw Current", claw.getSupplyCurrent().getValueAsDouble());
-    SmartDashboard.putString("Claw Status", String.valueOf(claw.getSupplyCurrent().getValueAsDouble()));
+    SmartDashboard.putNumber("Indexer Current", kicker.getSupplyCurrent().getValueAsDouble());
+    SmartDashboard.putString("Indexer Status", String.valueOf(kicker.getSupplyCurrent().getValueAsDouble()));
     SmartDashboard.putBoolean("Has Fuel", isFuelIn());
     
 
 
 
-    // Claw State Machine
+    // Indexer State Machine
     switch (indexerState) {
 
-      // In the idle state, the claw does not intake, and it isnt deactivated
+      // In the idle state, the indexer does not intake, and it isnt deactivated
       case IDLE:
-        setWheelSpeed(0);
-        hasFuel = false;
-        break;
+
+      setkickerSpeed(0);
+      
+
+      break;
 
 
 
 
-
-      // In the coral state, the claw will spin in reverse to intake coral,
-      //  deactivating if the coralCANRange detects an object
       case HAWCK:
         if (isFuelIn() ) {
           Timer.delay(.20);
-          setWheelSpeed(0);
+          setkickerSpeed(0);
           hasFuel = true;
         }
         else if (!hasGamepiece()) {
-          setWheelSpeed(0.3);
+          setkickerSpeed(0.3);
+          setindexerSpeed(.3);
         }
         break;
 
-      // In the algae state, the claw will spin forwards to intake algae, 
-      //  deactivating if the current exceeds 10 amps
-
-      // In the release state, the claw will spin forwards to release the gamepiece
-      //  and will release the deactivation lock
+      
       case TUHUA:
-        setWheelSpeed(0.3);
-        hasFuel = false;
+        setkickerSpeed(0.3);
         break;
 
-      // In the passive state, the claw will not intake, and will deactivate the intake. 
-      //  This will be used when the claw has a gamepiece
+      // In the passive state, the indexer will not intake, and will deactivate the intake. 
+      //  This will be used when the indexer has a gamepiece
       case PASSIVE:
-        setWheelSpeed(-.3);
+        setkickerSpeed(.15);
+
         
 
         break;

@@ -25,6 +25,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.subsystems.Turret;
+import frc.robot.commands.setFlyWheels;
+import frc.robot.commands.setKickerPassive;
+import frc.robot.commands.setTurretManual;
+import frc.robot.commands.movementCommands.hoodToPoint;
+import frc.robot.commands.movementCommands.hoodToZero;
+import frc.robot.subsystems.Flywheel;
+import frc.robot.subsystems.Hood;
+import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Swerve;
 
 
@@ -60,6 +69,13 @@ public RobotContainer() {
     public final static CommandXboxController guitar = new CommandXboxController(1);
 
     public final Swerve drivetrain = TunerConstants.createDrivetrain();
+    public static final Turret turret = new Turret();
+    public static final Hood hood = new Hood();
+    public static final Flywheel flywheel = new Flywheel();
+    public static final Indexer indexer = new Indexer();
+
+
+
 
 
 
@@ -107,21 +123,29 @@ public RobotContainer() {
 //Driver pad 
 
 
-        drivetrain.setDefaultCommand(
-            // Drivetrain will execute this command periodically
-            drivetrain.applyRequest(() ->
-            drive.withVelocityX(-driverPad.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-            .withVelocityY(-driverPad.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-            .withRotationalRate(-driverPad.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-            )
-        );
+        //  drivetrain.setDefaultCommand(
+        //     // Drivetrain will execute this command periodically
+        //     drivetrain.applyRequest(() ->
+        //     drive.withVelocityX(-driverPad.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+        //     .withVelocityY(-driverPad.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+        //     .withRotationalRate(-driverPad.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+        //     )
+        // );
 
         // getRotationToSpeaker
 
         //pointAtHubCommand
-
+// driver controls
       driverPad.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
       driverPad.y().onTrue(drivetrain.runOnce(() -> drivetrain.resetPose(new Pose2d(1.567, 3.761, Rotation2d.fromDegrees(0)))));
+
+
+
+     driverPad.x().whileTrue(new setFlyWheels());
+     driverPad.a().whileTrue(new setKickerPassive());
+
+
+// co driver controls, and yes it is a guitar hero controller
       guitar.y().onTrue(drivetrain.runOnce(() -> drivetrain.resetPose(new Pose2d(1.567, 3.761, Rotation2d.fromDegrees(0)))));
 
     //   driverPad.b().whileTrue(drivetrain.pointAtHubComm5and(() -> -driverPad.getLeftY() * MaxSpeed, () -> -driverPad.getLeftX() * MaxSpeed));

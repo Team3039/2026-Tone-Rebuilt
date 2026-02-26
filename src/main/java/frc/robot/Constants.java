@@ -44,14 +44,19 @@ public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKine
     public static final class Ports {
 //CLAW
     public static final int INTAKE = 1;
-    public static final int INDEXER = 2;
+    public static final int INDEXER = 14;
     public static final int INDEXERCANRANGE = 3;
-    public static final int TURRET = 4;
-    public static final int FLYWHEEL_LEFT = 5;
-    public static final int FLYWHEEL_RIGHT = 6;
+    public static final int TURRET = 17;
+    public static final int FLYWHEEL_LEFT = 18;
+    public static final int FLYWHEEL_RIGHT = 15;
     public static final int CANdleID = 13;
     public static final int INTAKE_ROLLER = 7;
+    public static final int HOOD = 16;
+    public static final int KICKER = 14;
+
+
     
+    //KICKER
 //INTAKE_ROLLER
 //TURRET
 //INDEXERCANRANGE
@@ -78,7 +83,7 @@ public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKine
     }
 
      public static final class Turret {
-        public static final double Turret_KP = 0.009;
+        public static final double Turret_KP = 0.01;
         public static final double Turret_KI = 0;
         public static final double Turret_KD = 0.0000;
         public static final double Turret_KS = 0.0001;
@@ -90,6 +95,18 @@ public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKine
         
 
     }
+    public static final class Hood {
+        public static final double Hood_KP = 0.3;
+        public static final double Hood_KI = 0;
+        public static final double Hood_KD = 0.0000;
+        public static final double Hood_KS = 0.06;
+        public static final double Hood_KG = 0;
+        public static final double Hood_KV = 0;
+        public static final double Hood_MAX_VEL = .4;
+        public static final double Hood_MAX_ACCEL = .20;
+        public static final double Hood_OFFSET = 0;
+    }
+
      public static final class Flywheel {
       public static final double Flywheel_KP = 0.12;
 		public static final double Flywheel_KI = 0.000;
