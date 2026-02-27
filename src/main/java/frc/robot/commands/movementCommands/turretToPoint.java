@@ -16,7 +16,7 @@ public class turretToPoint extends SequentialCommandGroup {
     
     addCommands(
 
-    new ActuateTurretToSetpoint(25, 100)          
+    new ActuateTurretToSetpoint(25, 5)          
     );
   }
 }

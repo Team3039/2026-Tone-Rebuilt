@@ -18,6 +18,7 @@ public class Constants {
     private static final double trackWidth = 0.5; // Define the trackWidth (example value)
     public static final double kDriveGearRatio = 5.357142857142857;
     public static final double wheelCircumference = Units.inchesToMeters(4 * Math.PI);
+    public static final double turretGearRatio = 34.83651483651484;
 
 
 

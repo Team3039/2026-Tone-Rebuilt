@@ -116,6 +116,11 @@ public class RobotContainer {
                 driverPad.x().whileTrue(new turretToZero());
                 driverPad.x().onFalse(new setTurretIdle());
 
+                driverPad.b().onTrue(new setTurretManual());
+                driverPad.b().onFalse(new setTurretIdle());
+
+
+
 
                 // driverPad.a().whileTrue(new TestShoot());
 

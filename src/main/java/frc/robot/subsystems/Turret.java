@@ -25,6 +25,7 @@ public class Turret extends SubsystemBase {
 		IDLE,
 		MANUAL,
 		POSITION,
+		TRACKING
 
 	}
 
@@ -47,7 +48,7 @@ public class Turret extends SubsystemBase {
 	}
 
 
-	// Create a variable to store the setpoint of the elevator in kraken encoder
+	// Create a variable to store the setpoint of the Turret in kraken encoder
 	// ticks
 	public static double setpointTurret  = 0;
 
@@ -73,7 +74,7 @@ public class Turret extends SubsystemBase {
 		// config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 		config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-		// Apply the configurator to the elevator motor
+		// Apply the configurator to the Turret motor
 		Turret.getConfigurator().apply(config);
 	}
 
@@ -95,24 +96,29 @@ public class Turret extends SubsystemBase {
 		turretState = state;
 	}
 
+	public double getTurretPosition() {
+
+	double position = Turret.getPosition().getValueAsDouble() + 0.0244140625;
+
+		return position * Constants.turretGearRatio;
+	}
 	
-    
 
 
 	public void setTurretPosition() {
 		double output = 0;
 
-		output = MathUtil.clamp(controller.calculate(Turret.getPosition().getValueAsDouble(), setpointTurret ),
-				.05 ,-.05) +
+		output = MathUtil.clamp(controller.calculate(getTurretPosition(), setpointTurret ),
+				.1 ,-.1) +
 				Constants.Turret.Turret_KS;
 
 		Turret.set(output);
 	
-        
+		
 	}
 
 	/**
-	 * Set the output of the elevator with feedforward
+	 * Set the output of the Turret with feedforward
 	 * 
 	 * @param percent The percentage to set the turret to
 	 */
@@ -121,7 +127,7 @@ public class Turret extends SubsystemBase {
 	}
 
 	public void stop() {
-        Turret.set(0);
+		Turret.set(0);
 	}
 
 	/**
@@ -129,25 +135,21 @@ public class Turret extends SubsystemBase {
 	 * 
 	 * @return the current angle of the turret in kraken ticks
 	 */
-	public double getTurretPosition() {
-		double position = Turret.getPosition().getValueAsDouble() + 0.0244140625;
-
-		return position * 34.83651483651484;
-	}
+	
 
 	/**
-	 * Get the current setpoint of the elevator
+	 * Get the current setpoint of the Turret
 	 * 
-	 * @return the current setpoint of the elevator
+	 * @return the current setpoint of the Turret
 	 */
 	public static double getSetpoint() {
-		return setpointTurret ;
+		return setpointTurret  ;
 	}
 
 	/**
-	 * Set the setpoint of the elevator
+	 * Set the setpoint of the Turret
 	 * 
-	 * @param setpoint the setpoint to set the elevator to, in kraken encoder ticks
+	 * @param setpoint the setpoint to set the Turret to, in kraken encoder ticks
 	 */
 	public static void setSetpoint(double setpoint) {
 		setpointTurret = setpoint;
@@ -155,9 +157,9 @@ public class Turret extends SubsystemBase {
 
 	
 	/**
-	 * Check if the elevator is at the setpoint within a given tolerance
+	 * Check if the Turret is at the setpoint within a given tolerance
 	 * 
-	 * @param tolerance the tolerance to check if the elevator is at the setpoint
+	 * @param tolerance the tolerance to check if the Turret is at the setpoint
 	 * @return true if the wrist is at the setpoint within the tolerance, false
 	 *         otherwise
 	 */
@@ -177,18 +179,22 @@ public class Turret extends SubsystemBase {
 		// Turret State Machine
 		switch (turretState) {
 
-			// In the Idle state, the elevator rests at the bottom of the robot
+			// In the Idle state, the Turret rests at the bottom of the robot
 			case IDLE:
 				stop();
 				break;
 
-			// In the Manual state, the elevator is controlled directly by the operator
+			// In the Manual state, the Turret is controlled directly by the operator
 			case MANUAL:
 				setTurretPercent(RobotContainer.driverPad.getLeftY() * 0.3);
 				break;
 
-			// In the Position state, the elevator is controlled by the setpoint
+			// In the Position state, the Turret is controlled by the setpoint
 			case POSITION:
+				setTurretPosition();
+				break;
+
+			case TRACKING:
 				setTurretPosition();
 				break;
 		}

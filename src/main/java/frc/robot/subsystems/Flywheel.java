@@ -6,6 +6,7 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -80,6 +81,32 @@ public class Flywheel extends SubsystemBase {
     public boolean isAtVelocitySetpoint() {
         return shooterLeft.getRotorVelocity().getValueAsDouble() >= targetVelocity;
     }
+
+    public double getDistanceFromHub() {
+        return Swerve.getDistanceToHub();
+    }
+
+
+
+    private final InterpolatingDoubleTreeMap dissierdshooterspeed = new InterpolatingDoubleTreeMap();
+
+    {
+        dissierdshooterspeed.put(0.5, 4.0); 
+        dissierdshooterspeed.put(2., 3.0);
+        dissierdshooterspeed.put(2.5, 2.0);
+        dissierdshooterspeed.put(3.5, 1.0); 
+    }
+
+  
+  
+    double Distance = getDistanceFromHub();
+
+    double result = dissierdshooterspeed.get(Distance); 
+    
+
+
+
+
 
     @Override
     public void periodic() {
