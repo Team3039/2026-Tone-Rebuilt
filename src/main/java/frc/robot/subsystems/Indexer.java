@@ -168,7 +168,7 @@ public class Indexer extends SubsystemBase {
       // In the passive state, the indexer will not intake, and will deactivate the intake. 
       //  This will be used when the indexer has a gamepiece
       case PASSIVE:
-        setkickerSpeed(.15);
+        setkickerSpeed(.6);
 
         
 

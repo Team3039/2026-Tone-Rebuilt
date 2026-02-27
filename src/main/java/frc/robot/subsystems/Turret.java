@@ -49,7 +49,7 @@ public class Turret extends SubsystemBase {
 
 	// Create a variable to store the setpoint of the elevator in kraken encoder
 	// ticks
-	public static double setpointElevator  = 0;
+	public static double setpointTurret  = 0;
 
 	// Turret Constructor
 	public Turret() {
@@ -66,8 +66,8 @@ public class Turret extends SubsystemBase {
 		// Soft Limits
 		config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
 		config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-		config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 45;
-		config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -45;
+		config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 90;
+		config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -50;
 
 		// Inverted and Neutral Modes
 		// config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
@@ -102,8 +102,8 @@ public class Turret extends SubsystemBase {
 	public void setTurretPosition() {
 		double output = 0;
 
-		output = MathUtil.clamp(controller.calculate(Turret.getPosition().getValueAsDouble(), setpointElevator * -1),
-				-.15, .25) +
+		output = MathUtil.clamp(controller.calculate(Turret.getPosition().getValueAsDouble(), setpointTurret ),
+				.05 ,-.05) +
 				Constants.Turret.Turret_KS;
 
 		Turret.set(output);
@@ -120,13 +120,19 @@ public class Turret extends SubsystemBase {
 		Turret.set(percent + Constants.Turret.Turret_KS);
 	}
 
+	public void stop() {
+        Turret.set(0);
+	}
+
 	/**
 	 * Get the current position of the turret
 	 * 
 	 * @return the current angle of the turret in kraken ticks
 	 */
 	public double getTurretPosition() {
-		return Turret.getPosition().getValueAsDouble();
+		double position = Turret.getPosition().getValueAsDouble() + 0.0244140625;
+
+		return position * 34.83651483651484;
 	}
 
 	/**
@@ -135,7 +141,7 @@ public class Turret extends SubsystemBase {
 	 * @return the current setpoint of the elevator
 	 */
 	public static double getSetpoint() {
-		return setpointElevator;
+		return setpointTurret ;
 	}
 
 	/**
@@ -144,9 +150,10 @@ public class Turret extends SubsystemBase {
 	 * @param setpoint the setpoint to set the elevator to, in kraken encoder ticks
 	 */
 	public static void setSetpoint(double setpoint) {
-		setpointElevator = setpoint;
+		setpointTurret = setpoint;
 	}
 
+	
 	/**
 	 * Check if the elevator is at the setpoint within a given tolerance
 	 * 
@@ -155,7 +162,7 @@ public class Turret extends SubsystemBase {
 	 *         otherwise
 	 */
 	public boolean isAtSetpoint(double tolerance) {
-		return Math.abs((setpointElevator - getTurretPosition())) <= tolerance;
+		return Math.abs((setpointTurret - getTurretPosition())) <= tolerance;
 	}
 
 	@Override
@@ -172,7 +179,7 @@ public class Turret extends SubsystemBase {
 
 			// In the Idle state, the elevator rests at the bottom of the robot
 			case IDLE:
-					setTurretPosition();
+				stop();
 				break;
 
 			// In the Manual state, the elevator is controlled directly by the operator

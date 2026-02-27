@@ -59,6 +59,9 @@ public class Flywheel extends SubsystemBase {
         return flywheelState;
     }
 
+
+	
+
     public void setShooterVelocity(double rps) {
         shooterLeft.setControl(
                 velocityRequest.withVelocity(rps)
@@ -86,8 +89,13 @@ public class Flywheel extends SubsystemBase {
         SmartDashboard.putNumber("Shooter RPS", currentVelocity);
         SmartDashboard.putBoolean("Shooter At Setpoint", isAtVelocitySetpoint());
         SmartDashboard.putString("Flywheel State", flywheelState.name());
+		
+
+
 
         switch (flywheelState) {
+
+
             case IDLE:
                 stop();
                 break;

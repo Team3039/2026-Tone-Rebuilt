@@ -5,19 +5,18 @@
 package frc.robot.commands.movementCommands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.ActuateHoodToSetpoint;
+import frc.robot.commands.ActuateTurretToSetpoint;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class hoodToPoint extends SequentialCommandGroup {
+public class turretToPoint extends SequentialCommandGroup {
   /** Creates a new ScoreCoralL2. */
-  public hoodToPoint() {
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
+  public turretToPoint() {
+    
     addCommands(
 
-    new ActuateHoodToSetpoint(.4, .001)          
+    new ActuateTurretToSetpoint(25, 100)          
     );
   }
 }

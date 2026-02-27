@@ -300,23 +300,22 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
 
 
 
-    // public double getRotationToHub() {
+    public double getRotationToHub() {
 
-    //     targetYaw = Math.atan2(
+        targetYaw = Math.atan2(
          
-    //         HubPose.getY() - getPose().getY(),
-    //         HubPose.getX() - getPose().getX()
-    //     );
-    //     return targetYaw;
-    // }
+            HubPose.getY() - getPose().getY(),
+            HubPose.getX() - getPose().getX()
+        );
+        return targetYaw;
+    }
 
-
-    // public double getDistanceToHub() {
-    //     return Math.hypot(
-    //         HubPose.getX() - getPose().getX(),
-    //         HubPose.getY() - getPose().getY()
-    //     );
-    // }
+    public double getDistanceToHub() {
+        return Math.hypot(
+            HubPose.getX() - getPose().getX(),
+            HubPose.getY() - getPose().getY()
+        );
+    }
 
     @Override
     public void periodic() {

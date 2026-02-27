@@ -26,132 +26,108 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.Turret;
+import frc.robot.commands.ActuateHoodToSetpoint;
 import frc.robot.commands.setFlyWheels;
 import frc.robot.commands.setKickerPassive;
+import frc.robot.commands.setTurretIdle;
 import frc.robot.commands.setTurretManual;
-import frc.robot.commands.movementCommands.hoodToPoint;
-import frc.robot.commands.movementCommands.hoodToZero;
+import frc.robot.commands.movementCommands.turretToPoint;
+import frc.robot.commands.movementCommands.turretToZero;
+import frc.robot.commands.movementCommands.TestShoot;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Swerve;
 
-
 public class RobotContainer {
-  
+
+        private final SendableChooser<Command> autoChooser;
+
+        public RobotContainer() {
+
+                NamedCommands.registerCommand("Depo side mid run start", drivetrain.runOnce(
+                                () -> drivetrain.resetPose(new Pose2d(4.440, 7.582, Rotation2d.fromDegrees(180.000)))));
+
+                autoChooser = AutoBuilder.buildAutoChooser(); // Auto chooser
+                SmartDashboard.putData("Auto Chooser", autoChooser);
+
+                configureBindings();
+
+        }
+
+        public final static CommandXboxController driverPad = new CommandXboxController(0);
+        public final static CommandXboxController guitar = new CommandXboxController(1);
+
+        public final Swerve drivetrain = TunerConstants.createDrivetrain();
+        public static final Turret turret = new Turret();
+        public static final Hood hood = new Hood();
+        public static final Flywheel flywheel = new Flywheel();
+        public static final Indexer indexer = new Indexer();
+
+        private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top
+                                                                                      // speed
+        private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per
+                                                                                          // second max angular velocity
+
+        /* Setting up bindings for necessary control of the swerve drive platform */
+        private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
+                        .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+                        .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive
+                                                                                 // motors
+        private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
+        private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+        private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric()
+                        .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+
+        /* Path follower */
+        // private final SendableChooser<Command> autoChooser;
+
+        private void configureBindings() {
+
+                // Drivetrain
+                // Note that X is defined as forward according to WPILib convention,
+                // and Y is defined as to the left according to WPILib convention.
+
+                // Driver pad
+
+                // drivetrain.setDefaultCommand(
+                // // Drivetrain will execute this command periodically
+                // drivetrain.applyRequest(() ->
+                // drive.withVelocityX(-driverPad.getLeftY() * MaxSpeed) // Drive forward with
+                // negative Y (forward)
+                // .withVelocityY(-driverPad.getLeftX() * MaxSpeed) // Drive left with negative
+                // X (left)
+                // .withRotationalRate(-driverPad.getRightX() * MaxAngularRate) // Drive
+                // counterclockwise with negative X (left)
+                // )
+                // );
+
+                // getRotationToSpeaker
+
+                // pointAtHubCommand
+                // driver controls
+                driverPad.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+                driverPad.y().onTrue(drivetrain.runOnce(
+                                () -> drivetrain.resetPose(new Pose2d(1.567, 3.761, Rotation2d.fromDegrees(0)))));
+
+                driverPad.a().whileTrue(new turretToPoint());
+                driverPad.a().onFalse(new setTurretIdle());
+
+                driverPad.x().whileTrue(new turretToZero());
+                driverPad.x().onFalse(new setTurretIdle());
 
 
-    
-private final SendableChooser<Command> autoChooser;
+                // driverPad.a().whileTrue(new TestShoot());
 
+                // co driver controls, and yes it is a guitar hero controller
+                guitar.y().onTrue(drivetrain.runOnce(
+                                () -> drivetrain.resetPose(new Pose2d(1.567, 3.761, Rotation2d.fromDegrees(0)))));
 
+                // driverPad.b().whileTrue(drivetrain.pointAtHubComm5and(() ->
+                // -driverPad.getLeftY() * MaxSpeed, () -> -driverPad.getLeftX() * MaxSpeed));
+        }
 
-
-
-public RobotContainer() {
-
-
-
-
- NamedCommands.registerCommand("Depo side mid run start", drivetrain.runOnce(() -> drivetrain.resetPose(new Pose2d(4.440, 7.582, Rotation2d.fromDegrees(180.000)))));
-
-
-    autoChooser = AutoBuilder.buildAutoChooser(); //Auto chooser
-    SmartDashboard.putData("Auto Chooser", autoChooser);
-
-        
-    configureBindings();
-    
-}
-    
-
-    public final static CommandXboxController driverPad = new CommandXboxController(0);
-    public final static CommandXboxController guitar = new CommandXboxController(1);
-
-    public final Swerve drivetrain = TunerConstants.createDrivetrain();
-    public static final Turret turret = new Turret();
-    public static final Hood hood = new Hood();
-    public static final Flywheel flywheel = new Flywheel();
-    public static final Indexer indexer = new Indexer();
-
-
-
-
-
-
-
-
-
-    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
-
-    /* Setting up bindings for necessary control of the swerve drive platform */
-    private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
-    private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-    private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
-    private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric()
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-
-
-
-
-
-  
-
-
-    /* Path follower */
-    // private final SendableChooser<Command> autoChooser;
-
-
-
-   
-
-    private void configureBindings() {
-
-
-
-
-
-
-    
-        // Drivetrain
-        // Note that X is defined as forward according to WPILib convention,
-        // and Y is defined as to the left according to WPILib convention.
-
-//Driver pad 
-
-
-        //  drivetrain.setDefaultCommand(
-        //     // Drivetrain will execute this command periodically
-        //     drivetrain.applyRequest(() ->
-        //     drive.withVelocityX(-driverPad.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-        //     .withVelocityY(-driverPad.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-        //     .withRotationalRate(-driverPad.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-        //     )
-        // );
-
-        // getRotationToSpeaker
-
-        //pointAtHubCommand
-// driver controls
-      driverPad.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-      driverPad.y().onTrue(drivetrain.runOnce(() -> drivetrain.resetPose(new Pose2d(1.567, 3.761, Rotation2d.fromDegrees(0)))));
-
-
-
-     driverPad.x().whileTrue(new setFlyWheels());
-     driverPad.a().whileTrue(new setKickerPassive());
-
-
-// co driver controls, and yes it is a guitar hero controller
-      guitar.y().onTrue(drivetrain.runOnce(() -> drivetrain.resetPose(new Pose2d(1.567, 3.761, Rotation2d.fromDegrees(0)))));
-
-    //   driverPad.b().whileTrue(drivetrain.pointAtHubComm5and(() -> -driverPad.getLeftY() * MaxSpeed, () -> -driverPad.getLeftX() * MaxSpeed));
-    }
-
-    public Command getAutonomousCommand() {
-        return autoChooser.getSelected();
-    }
+        public Command getAutonomousCommand() {
+                return autoChooser.getSelected();
+        }
 }
