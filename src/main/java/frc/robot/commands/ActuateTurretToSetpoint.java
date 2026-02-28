@@ -12,7 +12,7 @@ import frc.robot.subsystems.Turret.TurretState;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ActuateTurretToSetpoint extends Command {
 
-  double setpoint = 10;
+  double setpoint = 0;
   double tolerance = 0;
   public ActuateTurretToSetpoint(double setpoint, double tolerance) {
     addRequirements(RobotContainer.turret);
@@ -23,14 +23,15 @@ public class ActuateTurretToSetpoint extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    
+
+     RobotContainer.turret.setSetpoint(setpoint);
+    RobotContainer.turret.setState(TurretState.POSITION);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.turret.setSetpoint(setpoint);
-    RobotContainer.turret.setState(TurretState.POSITION);
+   
   }
 
   // Called once the command ends or is interrupted.

@@ -98,7 +98,7 @@ public class Turret extends SubsystemBase {
 
 	public double getTurretPosition() {
 
-	double position = Turret.getPosition().getValueAsDouble() + 1.2685546875;
+	double position = Turret.getPosition().getValueAsDouble();
 
 		return position
 ;
@@ -144,7 +144,7 @@ public class Turret extends SubsystemBase {
 	 * @return the current setpoint of the Turret
 	 */
 	public static double getSetpoint() {
-		return setpointTurret + 1.2685546875  ;
+		return setpointTurret  ;
 	}
 
 	/**
@@ -172,9 +172,11 @@ public class Turret extends SubsystemBase {
 	public void periodic() {
 		SmartDashboard.putNumber("Turret Encoder", getTurretPosition());
 		SmartDashboard.putNumber("Turret Output", Turret.get());
+		SmartDashboard.putNumber("Turret error", Math.abs((setpointTurret - getTurretPosition() )));
 		// SmartDashboard.putNumber("Turret Output Current",
 		// Turret.getSupplyCurrent().getValueAsDouble());
 		// SmartDashboard.putString("Turret State", String.valueOf(getState()));
+		SmartDashboard.getBoolean("isAtSetpoint?", isAtSetpoint(1));
 		SmartDashboard.putNumber("Turret Setpoint", getSetpoint());
 
 		// Turret State Machine
