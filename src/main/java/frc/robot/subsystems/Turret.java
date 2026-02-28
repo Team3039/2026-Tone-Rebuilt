@@ -67,8 +67,8 @@ public class Turret extends SubsystemBase {
 		// Soft Limits
 		config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
 		config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-		config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 90;
-		config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -50;
+		config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 2;
+		config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -1;
 
 		// Inverted and Neutral Modes
 		// config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
@@ -98,18 +98,19 @@ public class Turret extends SubsystemBase {
 
 	public double getTurretPosition() {
 
-	double position = Turret.getPosition().getValueAsDouble() + 0.0244140625;
+	double position = Turret.getPosition().getValueAsDouble() + 1.2685546875;
 
-		return position * Constants.turretGearRatio;
+		return position
+;
 	}
-	
+	// Constants.turretGearRatio
 
 
 	public void setTurretPosition() {
 		double output = 0;
 
 		output = MathUtil.clamp(controller.calculate(getTurretPosition(), setpointTurret ),
-				.1 ,-.1) +
+				.05 ,-.05) +
 				Constants.Turret.Turret_KS;
 
 		Turret.set(output);
@@ -143,7 +144,7 @@ public class Turret extends SubsystemBase {
 	 * @return the current setpoint of the Turret
 	 */
 	public static double getSetpoint() {
-		return setpointTurret  ;
+		return setpointTurret + 1.2685546875  ;
 	}
 
 	/**
