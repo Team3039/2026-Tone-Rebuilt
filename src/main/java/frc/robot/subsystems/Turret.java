@@ -107,16 +107,19 @@ public class Turret extends SubsystemBase {
 
 
 	public void setTurretPosition() {
-		double output = 0;
+    double pidOutput = controller.calculate(getTurretPosition(), setpointTurret);
 
-		output = MathUtil.clamp(controller.calculate(getTurretPosition(), setpointTurret ),
-				.05 ,-.05) +
-				Constants.Turret.Turret_KS;
+    double output = pidOutput;
 
-		Turret.set(output);
-	
-		
-	}
+    if (Math.abs(pidOutput) > 0.001) {
+        output += Math.copySign(Constants.Turret.Turret_KS, pidOutput);
+    }
+
+    output = MathUtil.clamp(output, -0.2, 0.2);
+
+    Turret.set(output);
+}
+
 
 	/**
 	 * Set the output of the Turret with feedforward
@@ -176,7 +179,7 @@ public class Turret extends SubsystemBase {
 		// SmartDashboard.putNumber("Turret Output Current",
 		// Turret.getSupplyCurrent().getValueAsDouble());
 		// SmartDashboard.putString("Turret State", String.valueOf(getState()));
-		SmartDashboard.getBoolean("isAtSetpoint?", isAtSetpoint(1));
+    SmartDashboard.putBoolean("isAtSetpoint?", controller.atSetpoint());
 		SmartDashboard.putNumber("Turret Setpoint", getSetpoint());
 
 		// Turret State Machine
