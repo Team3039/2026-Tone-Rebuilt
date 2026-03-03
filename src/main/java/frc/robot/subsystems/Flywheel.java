@@ -19,67 +19,68 @@ public class Flywheel extends SubsystemBase {
     public enum FlywheelState {
         IDLE,
         SHOOTING,
-        MANUAL
+        MANUAL,
+        TRACKING
     }
 
-    private final TalonFX shooterLeft =  new TalonFX(Constants.Ports.FLYWHEEL_LEFT);
-
-    private final TalonFX shooterRight = new TalonFX(Constants.Ports.FLYWHEEL_RIGHT);
-
-    private FlywheelState flywheelState = FlywheelState.IDLE;
-
-    private final VelocityVoltage velocityRequest = new VelocityVoltage(0);
-
-    public Flywheel() {
-
-        TalonFXConfiguration config = new TalonFXConfiguration();
-
-        // Current Limits
-        config.CurrentLimits.StatorCurrentLimit = 70;
-        config.CurrentLimits.StatorCurrentLimitEnable = true;
-
-        // pid shi
-        config.Slot0.kP = Constants.Flywheel.Flywheel_KP;
-        config.Slot0.kI = Constants.Flywheel.Flywheel_KI;
-        config.Slot0.kD = Constants.Flywheel.Flywheel_KD;
-        config.Slot0.kV = Constants.Flywheel.Flywheel_FF;
-
-        shooterLeft.getConfigurator().apply(config);
-        shooterRight.getConfigurator().apply(config);
-
-        shooterLeft.setNeutralMode(NeutralModeValue.Coast);
-        shooterRight.setNeutralMode(NeutralModeValue.Coast);
-	}
+    private final static TalonFX shooterLeft =  new TalonFX(Constants.Ports.FLYWHEEL_LEFT);
+    
+        private final TalonFX shooterRight = new TalonFX(Constants.Ports.FLYWHEEL_RIGHT);
+    
+        private FlywheelState flywheelState = FlywheelState.IDLE;
+    
+        private final VelocityVoltage velocityRequest = new VelocityVoltage(0);
+    
+        public Flywheel() {
+    
+            TalonFXConfiguration config = new TalonFXConfiguration();
+    
+            // Current Limits
+            config.CurrentLimits.StatorCurrentLimit = 70;
+            config.CurrentLimits.StatorCurrentLimitEnable = true;
+    
+            // pid shi
+            config.Slot0.kP = Constants.Flywheel.Flywheel_KP;
+            config.Slot0.kI = Constants.Flywheel.Flywheel_KI;
+            config.Slot0.kD = Constants.Flywheel.Flywheel_KD;
+            config.Slot0.kV = Constants.Flywheel.Flywheel_FF;
+    
+            shooterLeft.getConfigurator().apply(config);
+            shooterRight.getConfigurator().apply(config);
+    
+            shooterLeft.setNeutralMode(NeutralModeValue.Coast);
+            shooterRight.setNeutralMode(NeutralModeValue.Coast);
+        }
+            
+    
+        public void setState(FlywheelState state) {
+            flywheelState = state;
+        }
+    
+        public FlywheelState getState() {
+            return flywheelState;
+        }
+    
+    
         
-
-    public void setState(FlywheelState state) {
-        flywheelState = state;
-    }
-
-    public FlywheelState getState() {
-        return flywheelState;
-    }
-
-
-	
-
-    public void setShooterVelocity(double rps) {
-        shooterLeft.setControl(
-                velocityRequest.withVelocity(rps)
-        );
-
-		shooterRight.setControl(
-                velocityRequest.withVelocity(-rps)
-        );
-    }
-
-    public void stop() {
-        shooterLeft.setControl(velocityRequest.withVelocity(0));
-        shooterRight.setControl(velocityRequest.withVelocity(0));
-    }
-
-    public boolean isAtVelocitySetpoint() {
-        return shooterLeft.getRotorVelocity().getValueAsDouble() >= targetVelocity;
+    
+        public void setShooterVelocity(double rps) {
+            shooterLeft.setControl(
+                    velocityRequest.withVelocity(rps)
+            );
+    
+            shooterRight.setControl(
+                    velocityRequest.withVelocity(-rps)
+            );
+        }
+    
+        public void stop() {
+            shooterLeft.setControl(velocityRequest.withVelocity(0));
+            shooterRight.setControl(velocityRequest.withVelocity(0));
+        }
+    
+        public static boolean isAtVelocitySetpoint() {
+            return shooterLeft.getRotorVelocity().getValueAsDouble() >= targetVelocity;
     }
 
     public double getDistanceFromHub() {
@@ -91,10 +92,10 @@ public class Flywheel extends SubsystemBase {
     private final InterpolatingDoubleTreeMap dissierdshooterspeed = new InterpolatingDoubleTreeMap();
 
     {
-        dissierdshooterspeed.put(0.5, 4.0); 
-        dissierdshooterspeed.put(2., 3.0);
-        dissierdshooterspeed.put(2.5, 2.0);
-        dissierdshooterspeed.put(3.5, 1.0); 
+        dissierdshooterspeed.put(3., 4.7); 
+        dissierdshooterspeed.put(1.5, 4.5);
+        dissierdshooterspeed.put(1.4, 4.0);
+        dissierdshooterspeed.put(4.1, 4.7); 
     }
 
   
@@ -114,6 +115,8 @@ public class Flywheel extends SubsystemBase {
         double currentVelocity = shooterLeft.getRotorVelocity().getValueAsDouble();
 
         SmartDashboard.putNumber("Shooter RPS", currentVelocity);
+        SmartDashboard.putNumber("result RPS", result);
+
         SmartDashboard.putBoolean("Shooter At Setpoint", isAtVelocitySetpoint());
         SmartDashboard.putString("Flywheel State", flywheelState.name());
 		
@@ -128,7 +131,11 @@ public class Flywheel extends SubsystemBase {
                 break;
 
             case SHOOTING:
-                setShooterVelocity(4.5);
+                setShooterVelocity(4);
+                break;
+
+                case TRACKING:
+                setShooterVelocity( result);
                 break;
 
 			case MANUAL:

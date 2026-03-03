@@ -17,6 +17,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import frc.robot.TunerConstants;
 import com.ctre.phoenix6.swerve.SwerveModule;
@@ -299,16 +300,17 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
     
     
     
-    
-        public double getRotationToHub() {
-    
-            targetYaw = Math.atan2(
-             
-                HubPose.getY() - getPose().getY(),
-                HubPose.getX() - getPose().getX()
-            );
-            return targetYaw;
-        }
+    public double getRotationToHub() {
+
+        targetYaw = Math.atan2(
+         
+            HubPose.getY() - getPose().getY(),
+            HubPose.getX() - getPose().getX()
+        );
+
+    return Math.toDegrees(targetYaw);  
+  }
+
     
         public static double getDistanceToHub() {
             return Math.hypot(
@@ -331,8 +333,10 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
                             // SmartDashboard.putNumberArray("CameraPose", new double[] { cameraPoses[bestCamera].pose.getTranslation().getX(), cameraPoses[bestCamera].pose.getTranslation().getY(),
                             //     cameraPoses[bestCamera].pose.getRotation().getRadians() });
                             SmartDashboard.putNumberArray("bot Pose", new double[] {getPose().getX(), getPose().getY(), getPose().getRotation().getRadians()});
-                
-                            // SmartDashboard.putNumber("DistanceToHub", getDistanceToHub());
+
+                        SmartDashboard.putNumber("yaw", gyro.getYaw().getValueAsDouble());
+
+                            SmartDashboard.putNumber("getDistanceToHub", getDistanceToHub());
                 
                 
                 
@@ -403,8 +407,32 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
         return Math.IEEEremainder(gyro.getYaw().getValueAsDouble(), 360.0);
     }
 
+
+    public Command pointAtHubCommand(Supplier<Double> vxSupplier, Supplier<Double> vySupplier) {
+        var pid = new edu.wpi.first.math.controller.PIDController(4.0, 0.0, 0.0);
+        pid.enableContinuousInput(-Math.PI, Math.PI);
+        pid.setTolerance(Math.toRadians(.10));
+
+        return new edu.wpi.first.wpilibj2.command.PIDCommand(
+            pid,
+            () -> getState().Pose.getRotation().getRadians(),
+            this::getRotationToHub,
+            output -> {
+                final double kMaxOmega = 6.0;
+                double omega = Math.max(-kMaxOmega, Math.min(kMaxOmega, output));
+                double vx = vxSupplier.get();
+                double vy = vySupplier.get();
+                setControl(m_pathApplyRobotSpeeds.withSpeeds(new ChassisSpeeds(vx, vy, omega)));
+            },
+            this
+        )
+        .until(() -> pid.atSetpoint())
+        .andThen(() -> setControl(m_pathApplyRobotSpeeds.withSpeeds(new ChassisSpeeds(0.0, 0.0, 0.0))), this);
+    }
+
+
+
     public Rotation2d getGyroRotation2D() {
-        SmartDashboard.putNumber("yaw", gyro.getYaw().getValueAsDouble());
         return Rotation2d.fromDegrees(getCompassHeading());//gyro.getYaw().getValueAsDouble());
     }
 

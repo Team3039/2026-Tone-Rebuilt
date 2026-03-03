@@ -95,13 +95,21 @@ public class Turret extends SubsystemBase {
 	public void setState(TurretState state) {
 		turretState = state;
 	}
+	
+
+	// public double getTargetRotToHub() {
+
+	// double target = Swerve.getRotationToHub();
+
+	// 	return target;
+
+	// }
 
 	public double getTurretPosition() {
 
-	double position = Turret.getPosition().getValueAsDouble();
+	double position = Turret.getPosition().getValueAsDouble() + 0.2705078125;
 
-		return position
-;
+		return position * Constants.turretGearRatio;
 	}
 	// Constants.turretGearRatio
 
@@ -115,7 +123,7 @@ public class Turret extends SubsystemBase {
         output += Math.copySign(Constants.Turret.Turret_KS, pidOutput);
     }
 
-    output = MathUtil.clamp(output, -0.2, 0.2);
+    output = MathUtil.clamp(output, -0.1, 0.1);
 
     Turret.set(output);
 }
@@ -147,7 +155,7 @@ public class Turret extends SubsystemBase {
 	 * @return the current setpoint of the Turret
 	 */
 	public static double getSetpoint() {
-		return setpointTurret  ;
+		return setpointTurret;
 	}
 
 	/**
@@ -174,6 +182,9 @@ public class Turret extends SubsystemBase {
 	@Override
 	public void periodic() {
 		SmartDashboard.putNumber("Turret Encoder", getTurretPosition());
+		
+		// SmartDashboard.putNumber("Target Rot to hub", getTargetRotToHub());
+
 		SmartDashboard.putNumber("Turret Output", Turret.get());
 		SmartDashboard.putNumber("Turret error", Math.abs((setpointTurret - getTurretPosition() )));
 		// SmartDashboard.putNumber("Turret Output Current",

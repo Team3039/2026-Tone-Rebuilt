@@ -36,6 +36,7 @@ import frc.robot.commands.movementCommands.turretToZero;
 import frc.robot.commands.movementCommands.TestShoot;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
+import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Swerve;
 
@@ -63,6 +64,9 @@ public class RobotContainer {
         public static final Hood hood = new Hood();
         public static final Flywheel flywheel = new Flywheel();
         public static final Indexer indexer = new Indexer();
+        public static final Hopper hopper = new Hopper();
+
+        
 
         private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top
                                                                                       // speed
@@ -90,17 +94,14 @@ public class RobotContainer {
 
                 // Driver pad
 
-                // drivetrain.setDefaultCommand(
-                // // Drivetrain will execute this command periodically
-                // drivetrain.applyRequest(() ->
-                // drive.withVelocityX(-driverPad.getLeftY() * MaxSpeed) // Drive forward with
-                // negative Y (forward)
-                // .withVelocityY(-driverPad.getLeftX() * MaxSpeed) // Drive left with negative
-                // X (left)
-                // .withRotationalRate(-driverPad.getRightX() * MaxAngularRate) // Drive
-                // counterclockwise with negative X (left)
-                // )
-                // );
+        //    drivetrain.setDefaultCommand(
+        //     // Drivetrain will execute this command periodically
+        //     drivetrain.applyRequest(() ->
+        //     drive.withVelocityX(-driverPad.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+        //     .withVelocityY(-driverPad.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+        //     .withRotationalRate(-driverPad.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+        //     )
+        // );
 
                 // getRotationToSpeaker
 
@@ -110,14 +111,14 @@ public class RobotContainer {
                 driverPad.y().onTrue(drivetrain.runOnce(
                                 () -> drivetrain.resetPose(new Pose2d(1.567, 3.761, Rotation2d.fromDegrees(0)))));
 
-                driverPad.a().whileTrue(new turretToPoint());
-                driverPad.a().onFalse(new setTurretIdle());
+                driverPad.a().whileTrue(new setFlyWheels());
+                // driverPad.a().onFalse(new setTurretIdle());
 
                 driverPad.x().whileTrue(new turretToZero());
                 driverPad.x().onFalse(new setTurretIdle());
 
-                driverPad.b().onTrue(new setTurretManual());
-                driverPad.b().onFalse(new setTurretIdle());
+                 driverPad.b().whileTrue(drivetrain.pointAtHubCommand(() -> -driverPad.getLeftY() * MaxSpeed, () -> -driverPad.getLeftX() * MaxSpeed));
+                // driverPad.b().onFalse(new setTurretIdle());
 
 
 
