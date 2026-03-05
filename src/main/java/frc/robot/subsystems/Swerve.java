@@ -437,12 +437,10 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
     }
 
     public PoseEstimate grabPose(String camera) {
- LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-front");
-        // LimelightHelpers.SetRobotOrientation("limelight-left",getGyroYaw().getDegrees(),
-        // 0, 0, 0, 0, 0);
+        LimelightHelpers.SetRobotOrientation( "limelight-front", gyro.getYaw().getValueAsDouble(), 0, 0, 0, 0,  0);
 
-        mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(camera);
-        return mt1;
+        mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-front");
+        return mt2;
 
     }
 
