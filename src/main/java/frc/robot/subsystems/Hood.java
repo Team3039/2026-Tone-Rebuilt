@@ -25,13 +25,17 @@ public class Hood extends SubsystemBase {
     IDLE,
     MANUAL,
     POSITION,
+    TRACKING
+
   }
+
+
 
   // Create a variable to store the current state of the hood
   public HoodState hoodState = HoodState.IDLE;
 
   // Create a talonfx for the hood
-  public TalonFX Hood = new TalonFX(Constants.Ports.HOOD);
+  public TalonFX hoodMotor = new TalonFX(Constants.Ports.HOOD);
 
   // Create a PID Controller for the hood
   private PIDController controller = new PIDController(
@@ -43,104 +47,119 @@ public class Hood extends SubsystemBase {
 
   }
 
-  // Create a variable to store the setpoint of the hood in kraken encoder ticks
-  public volatile static double setpointHood  = 0;
-  
-    // Hood Constructor
-    public Hood() {
-  
-      // Create a talonfx configurator.
-      TalonFXConfiguration config = new TalonFXConfiguration();
-  
-      config.CurrentLimits.SupplyCurrentLimit = 20;
-      config.CurrentLimits.SupplyCurrentLimitEnable = true;
-  
-      config.CurrentLimits.StatorCurrentLimit = 120;
-      config.CurrentLimits.StatorCurrentLimitEnable = true;
-  
-      // Soft Limits
-      config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-      config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-      config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = -2;
-      config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.2;
-  
-      // Inverted and Neutral Modes
-      // config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-      config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-  
-      // Apply the configurator to the hood motor
-      Hood.getConfigurator().apply(config);
-    }
-  
-    /**
-     * Get the state of the hood
-     * 
-     * @return The state of the hood as an HoodState
-     */
-    public HoodState getState() {
-      return hoodState;
-    }
-  
-    /**
-     * Set the state of the hood
-     * 
-     * @param state The state to set the hood to
-     */
-    public void setState(HoodState state) {
-      hoodState = state;
-    }
-  
-    public void setHoodPosition() {
-      double output = 0;
-  
-        output = MathUtil.clamp(controller.calculate(Hood.getPosition().getValueAsDouble(), setpointHood),
-            .25, -.25) +
-            Constants.Hood.Hood_KS;
-      
-      Hood.set(output);
-    }
-  
-    /**
-     * Set the output of the hood with feedforward
-     * 
-     * @param percent The percentage to set the hood to
-     */
-    public void setHoodPercent(double percent) {
-      Hood.set(percent + Constants.Hood.Hood_KS);
-    }
-  
-    /**
-     * Get the current position of the hood
-     * 
-     * @return the current angle of the hood in kraken ticks
-     */
-    public double getHoodPosition() {
-      return Hood.getPosition().getValueAsDouble() * 360;
-    }
-  
-    /**
-     * Get the current setpoint of the hood
-     * 
-     * @return the current setpoint of the hood
-     */
-    public static double getSetpoint() {
-      return setpointHood;
+
+  // Create a variable to store the setpoint of the hood in kraken encoder
+  // ticks
+  public static double setpointHood  = 0;
+
+  // Hood Constructor
+  public Hood() {
+
+    // Create a talonfx configurator.
+    TalonFXConfiguration config = new TalonFXConfiguration();
+
+    config.CurrentLimits.SupplyCurrentLimit = 20;
+    config.CurrentLimits.SupplyCurrentLimitEnable = true;
+
+    config.CurrentLimits.StatorCurrentLimit = 120;
+    config.CurrentLimits.StatorCurrentLimitEnable = true;
+
+    // Soft Limits
+    config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 2;
+    config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -1;
+
+    // Inverted and Neutral Modes
+    // config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+    // Apply the configurator to the Hood motor
+    hoodMotor.getConfigurator().apply(config);
   }
 
   /**
-   * Set the setpoint of the hood
+   * Get the state of the hood
    * 
-   * @param setpoint the setpoint to set the hood to, in kraken encoder ticks
+   * @return The state of the hood as an HoodState
    */
-  public void setSetpoint(double setpoint) {
+  public HoodState getState() {
+    return hoodState;
+  }
+
+  /**
+   * Set the state of the hood
+   * 
+   * @param state The state to set the hood to
+   */
+  public void setState(HoodState state) {
+    hoodState = state;
+  }
+  
+
+
+
+  public double getHoodPosition() {
+
+  double position = hoodMotor.getPosition().getValueAsDouble() - 0.3728125;
+
+    return position * -1;
+  }
+
+
+  public void setHoodPosition() {
+  double pidOutput = controller.calculate(getHoodPosition(), setpointHood);
+
+  double output = pidOutput;
+
+  if (Math.abs(pidOutput) > 0.001) {
+    output += Math.copySign(Constants.Hood.Hood_KS, pidOutput);
+  }
+
+  output = MathUtil.clamp(output, -0.08, 0.08);
+
+  hoodMotor.set(output);
+}
+
+
+  /**
+   * Set the output of the hood with feedforward
+   * 
+   * @param percent The percentage to set the hood to
+   */
+  public void setHoodPercent(double percent) {
+    hoodMotor.set(percent + Constants.Hood.Hood_KS);
+  }
+
+  public void stop() {
+    hoodMotor.set(0);
+  }
+
+  /**
+   * Get the current setpoint of the Hood
+   * 
+   * @return the current setpoint of the Hood
+   */
+  public static double getSetpoint() {
+    return setpointHood;
+  }
+
+  /**
+   * Set the setpoint of the Hood
+   * 
+   * @param setpoint the setpoint to set the Hood to, in kraken encoder ticks
+   */
+  public static void setSetpoint(double setpoint) {
     setpointHood = setpoint;
   }
 
+  
   /**
-   * Check if the hood is at the setpoint within a given tolerance
+   * Check if the Hood is at the setpoint within a given tolerance
    * 
-   * @param tolerance the tolerance to check if the hood is at the setpoint
-   * @return true if the hood is at the setpoint within the tolerance, false otherwise
+   * @param tolerance the tolerance to check if the Hood is at the setpoint
+   * @return true if the hood is at the setpoint within the tolerance, false
+   *         otherwise
    */
   public boolean isAtSetpoint(double tolerance) {
     return Math.abs((setpointHood - getHoodPosition())) <= tolerance;
@@ -149,26 +168,34 @@ public class Hood extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Hood Encoder", getHoodPosition());
-    SmartDashboard.putNumber("Hood Output", Hood.get());
-    SmartDashboard.putNumber("Hood Setpoint", getSetpoint());
+    
+    // SmartDashboard.putNumber("Target Rot to hub", getTargetRotToHub());
+
+    SmartDashboard.putNumber("Hood Output", hoodMotor.get());
+    SmartDashboard.putNumber("Hood error", Math.abs((setpointHood - getHoodPosition() )));
+    // SmartDashboard.putNumber("Hood Output Current",
+    // hoodMotor.getSupplyCurrent().getValueAsDouble());
+    // SmartDashboard.putString("Hood State", String.valueOf(getState()));
+  SmartDashboard.putBoolean("isAtSetpoint?", controller.atSetpoint());
 
     // Hood State Machine
     switch (hoodState) {
 
-      // In the Idle state, the hood rests
+      // In the Idle state, the Hood rests at the bottom of the robot
       case IDLE:
-        setHoodPosition();
+        stop();
         break;
 
-      // In the Manual state, the hood is controlled directly by the operator
+      // In the Manual state, the Hood is controlled directly by the operator
       case MANUAL:
-        setHoodPercent(RobotContainer.driverPad.getLeftY() * 0.3);
+        setHoodPercent(RobotContainer.driverPad.getLeftY() * 1.5);
         break;
 
-      // In the Position state, the hood is controlled by the setpoint
+      // In the Position state, the Hood is controlled by the setpoint
       case POSITION:
         setHoodPosition();
         break;
+
     }
   }
 }

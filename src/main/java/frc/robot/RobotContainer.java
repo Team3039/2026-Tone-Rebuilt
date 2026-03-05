@@ -28,12 +28,17 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.Turret;
 import frc.robot.commands.ActuateHoodToSetpoint;
 import frc.robot.commands.setFlyWheels;
+import frc.robot.commands.setHoodManual;
 import frc.robot.commands.setKickerPassive;
 import frc.robot.commands.setTurretIdle;
-import frc.robot.commands.setTurretManual;
+import frc.robot.commands.setTurretTracking;
 import frc.robot.commands.movementCommands.turretToPoint;
 import frc.robot.commands.movementCommands.turretToZero;
 import frc.robot.commands.movementCommands.TestShoot;
+import frc.robot.commands.movementCommands.hoodToPoint;
+import frc.robot.commands.movementCommands.hoodToZero;
+import frc.robot.commands.movementCommands.setTurretPosition;
+import frc.robot.commands.movementCommands.turretToHub;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Hopper;
@@ -94,30 +99,31 @@ public class RobotContainer {
 
                 // Driver pad
 
-        //    drivetrain.setDefaultCommand(
-        //     // Drivetrain will execute this command periodically
-        //     drivetrain.applyRequest(() ->
-        //     drive.withVelocityX(-driverPad.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-        //     .withVelocityY(-driverPad.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-        //     .withRotationalRate(-driverPad.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-        //     )
-        // );
+           drivetrain.setDefaultCommand(
+            // Drivetrain will execute this command periodically
+            drivetrain.applyRequest(() ->
+            drive.withVelocityX(-driverPad.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+            .withVelocityY(-driverPad.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+            .withRotationalRate(-driverPad.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+            )
+        );
 
-                // getRotationToSpeaker
 
-                // pointAtHubCommand
                 // driver controls
                 driverPad.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-                driverPad.y().onTrue(drivetrain.runOnce(
-                                () -> drivetrain.resetPose(new Pose2d(1.567, 3.761, Rotation2d.fromDegrees(0)))));
+
+                // driverPad.y().onTrue(drivetrain.runOnce(  () -> drivetrain.resetPose(new Pose2d(1.567, 3.761, Rotation2d.fromDegrees(0)))));
 
                 driverPad.a().whileTrue(new setFlyWheels());
                 // driverPad.a().onFalse(new setTurretIdle());
 
-                driverPad.x().whileTrue(new turretToZero());
+                driverPad.x().whileTrue(new setTurretTracking());
                 driverPad.x().onFalse(new setTurretIdle());
 
-                 driverPad.b().whileTrue(drivetrain.pointAtHubCommand(() -> -driverPad.getLeftY() * MaxSpeed, () -> -driverPad.getLeftX() * MaxSpeed));
+                // driverPad.y().whileTrue(new setTurretZero());
+                // driverPad.y().onFalse(new setTurretTracking());
+
+                //  driverPad.b().whileTrue(drivetrain.pointAtHubCommand(() -> -driverPad.getLeftY() * MaxSpeed, () -> -driverPad.getLeftX() * MaxSpeed));
                 // driverPad.b().onFalse(new setTurretIdle());
 
 

@@ -169,11 +169,11 @@ public class Hopper extends SubsystemBase {
       //  This will be used when the indexer has a gamepiece
       case PASSIVE:
 
-      if(hopper.getSupplyCurrent().getValueAsDouble()> 38)  {sethopperSpeed(.4);}
+      if(hopper.getSupplyCurrent().getValueAsDouble()> 39)  {sethopperSpeed(.5);}
 
       else
 
-        sethopperSpeed(-0.4);      
+        sethopperSpeed(-0.5);      
         
 
         break;

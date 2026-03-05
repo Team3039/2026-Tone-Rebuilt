@@ -300,16 +300,15 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
     
     
     
-    public double getRotationToHub() {
+    public static double getRotationToHub() {
 
         targetYaw = Math.atan2(
          
             HubPose.getY() - getPose().getY(),
             HubPose.getX() - getPose().getX()
         );
-
-    return Math.toDegrees(targetYaw);  
-  }
+        return Math.toDegrees(targetYaw);  
+    }
 
     
         public static double getDistanceToHub() {
@@ -321,6 +320,7 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
                 
                     @Override
                     public void periodic() {
+                        
                 
                         m_poseEstimator.update(getGyroRotation2D(), getModulePositions());
                         botPose2d = m_poseEstimator.getEstimatedPosition();
@@ -334,9 +334,9 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
                             //     cameraPoses[bestCamera].pose.getRotation().getRadians() });
                             SmartDashboard.putNumberArray("bot Pose", new double[] {getPose().getX(), getPose().getY(), getPose().getRotation().getRadians()});
 
-                        SmartDashboard.putNumber("yaw", gyro.getYaw().getValueAsDouble());
+                            SmartDashboard.putNumber("yaw", gyro.getRotation2d().getDegrees());
 
-                            SmartDashboard.putNumber("getDistanceToHub", getDistanceToHub());
+                        // SmartDashboard.putNumber("getRotationToHub", getRotationToHub());
                 
                 
                 
@@ -408,27 +408,27 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
     }
 
 
-    public Command pointAtHubCommand(Supplier<Double> vxSupplier, Supplier<Double> vySupplier) {
-        var pid = new edu.wpi.first.math.controller.PIDController(4.0, 0.0, 0.0);
-        pid.enableContinuousInput(-Math.PI, Math.PI);
-        pid.setTolerance(Math.toRadians(.10));
+    // public Command pointAtHubCommand(Supplier<Double> vxSupplier, Supplier<Double> vySupplier) {
+    //     var pid = new edu.wpi.first.math.controller.PIDController(4.0, 0.0, 0.0);
+    //     pid.enableContinuousInput(-Math.PI, Math.PI);
+    //     pid.setTolerance(Math.toRadians(.10));
 
-        return new edu.wpi.first.wpilibj2.command.PIDCommand(
-            pid,
-            () -> getState().Pose.getRotation().getRadians(),
-            this::getRotationToHub,
-            output -> {
-                final double kMaxOmega = 6.0;
-                double omega = Math.max(-kMaxOmega, Math.min(kMaxOmega, output));
-                double vx = vxSupplier.get();
-                double vy = vySupplier.get();
-                setControl(m_pathApplyRobotSpeeds.withSpeeds(new ChassisSpeeds(vx, vy, omega)));
-            },
-            this
-        )
-        .until(() -> pid.atSetpoint())
-        .andThen(() -> setControl(m_pathApplyRobotSpeeds.withSpeeds(new ChassisSpeeds(0.0, 0.0, 0.0))), this);
-    }
+    //     return new edu.wpi.first.wpilibj2.command.PIDCommand(
+    //         pid,
+    //         () -> getState().Pose.getRotation().getDegrees(),
+    //         this::getRotationToHub,
+    //         output -> {
+    //             final double kMaxOmega = 6.0;
+    //             double omega = Math.max(-kMaxOmega, Math.min(kMaxOmega, output));
+    //             double vx = vxSupplier.get();
+    //             double vy = vySupplier.get();
+    //             setControl(m_pathApplyRobotSpeeds.withSpeeds(new ChassisSpeeds(vx, vy, omega)));
+    //         },
+    //         this
+    //     )
+    //     .until(() -> pid.atSetpoint())
+    //     .andThen(() -> setControl(m_pathApplyRobotSpeeds.withSpeeds(new ChassisSpeeds(0.0, 0.0, 0.0))), this);
+    // }
 
 
 

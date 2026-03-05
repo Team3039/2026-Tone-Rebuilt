@@ -18,7 +18,7 @@ public class Constants {
     private static final double trackWidth = 0.5; // Define the trackWidth (example value)
     public static final double kDriveGearRatio = 5.357142857142857;
     public static final double wheelCircumference = Units.inchesToMeters(4 * Math.PI);
-    public static final double turretGearRatio = 42.33348644924208;
+    public static final double turretGearRatio = 28.89934148635936;
 
 
 
@@ -86,10 +86,10 @@ public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKine
     }
 
      public static final class Turret {
-        public static final double Turret_KP = 0.0001;
+        public static final double Turret_KP = 0.0067;
         public static final double Turret_KI = 0;
-        public static final double Turret_KD = 0.0000;
-        public static final double Turret_KS = 0.05;
+        public static final double Turret_KD = 0.0001;
+        public static final double Turret_KS = 0.0005;
         public static final double Turret_KG = 0;
         public static final double Turret_KV = 0;
         public static final double Turret_MAX_VEL = .0;
@@ -99,10 +99,10 @@ public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKine
 
     }
     public static final class Hood {
-        public static final double Hood_KP = 0.3;
+        public static final double Hood_KP = 0.03;
         public static final double Hood_KI = 0;
         public static final double Hood_KD = 0.0000;
-        public static final double Hood_KS = 0.06;
+        public static final double Hood_KS = 0.05;
         public static final double Hood_KG = 0;
         public static final double Hood_KV = 0;
         public static final double Hood_MAX_VEL = .4;

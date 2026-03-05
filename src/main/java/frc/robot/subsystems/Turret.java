@@ -97,17 +97,17 @@ public class Turret extends SubsystemBase {
 	}
 	
 
-	// public double getTargetRotToHub() {
+	public double getTargetRotToHub() {
 
-	// double target = Swerve.getRotationToHub();
+	double target = Swerve.getRotationToHub();
 
-	// 	return target;
+		return target * -1;
 
-	// }
+	}
 
 	public double getTurretPosition() {
 
-	double position = Turret.getPosition().getValueAsDouble() + 0.2705078125;
+	double position = Turret.getPosition().getValueAsDouble() + -0.1123046875;
 
 		return position * Constants.turretGearRatio;
 	}
@@ -187,11 +187,14 @@ public class Turret extends SubsystemBase {
 
 		SmartDashboard.putNumber("Turret Output", Turret.get());
 		SmartDashboard.putNumber("Turret error", Math.abs((setpointTurret - getTurretPosition() )));
+		
+		SmartDashboard.putNumber("Turret Setpoint", (getSetpoint() ));
+
 		// SmartDashboard.putNumber("Turret Output Current",
 		// Turret.getSupplyCurrent().getValueAsDouble());
-		// SmartDashboard.putString("Turret State", String.valueOf(getState()));
+		SmartDashboard.putString("Turret State", String.valueOf(getState()));
     SmartDashboard.putBoolean("isAtSetpoint?", controller.atSetpoint());
-		SmartDashboard.putNumber("Turret Setpoint", getSetpoint());
+		SmartDashboard.putNumber("getTargetRotToHub", getTargetRotToHub());
 
 		// Turret State Machine
 		switch (turretState) {
@@ -212,8 +215,11 @@ public class Turret extends SubsystemBase {
 				break;
 
 			case TRACKING:
+       		 
+				setSetpoint(getTargetRotToHub() + Swerve.getPose().getRotation().getDegrees());
 				setTurretPosition();
-				break;
+
+      		  break;
 		}
 	}
 }
