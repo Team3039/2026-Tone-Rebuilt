@@ -4,27 +4,21 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.configs.CANrangeConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotContainer;
-import frc.robot.TunerConstants;
 import frc.robot.Constants;
 
 
-public class Indexer extends SubsystemBase {
+public class Hopper extends SubsystemBase {
 
 
   // Create the possible states of the indexer
-  public enum IndexerState {
+  public enum HopperState {
     IDLE,
     PASSIVE,
     HAWCK,
@@ -32,23 +26,22 @@ public class Indexer extends SubsystemBase {
   }
 
   // Create a variable to store the current state of the indexer
-  IndexerState indexerState = IndexerState.IDLE;
+  HopperState hopperState = HopperState.IDLE;
 
   // Keep track of whether or not the intake has a coral
   public boolean hasFuel = false;
 
 
   // Create a talonfx for the indexer
-  TalonFX indexer = new TalonFX(Constants.Ports.INDEXER);
-  TalonFX kicker = new TalonFX(Constants.Ports.KICKER);
+  TalonFX hopper = new TalonFX(Constants.Ports.HOPPER);
 
 
   // This CANrange is used to detect coral in the intake
-  CANrange INDEXERCANRANGE = new CANrange(Constants.Ports.INDEXERCANRANGE);
+  // CANrange INDEXERCANRANGE = new CANrange(Constants.Ports.INDEXERCANRANGE);
 
 
   // Indexer Constructor
-  public Indexer() {
+  public Hopper() {
 
     // Create a talonfx configurator.
     TalonFXConfiguration indexerConfig = new TalonFXConfiguration();
@@ -58,7 +51,7 @@ public class Indexer extends SubsystemBase {
     indexerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     // Apply the configurator to the indexer motor
-    indexer.getConfigurator().apply(indexerConfig);
+    hopper.getConfigurator().apply(indexerConfig);
 
   }
     // Create a CANrange configurator
@@ -68,8 +61,8 @@ public class Indexer extends SubsystemBase {
    * 
    * @return the current state of the indexer as a IndexerState
    */
-  public IndexerState getState() {
-    return indexerState;
+  public HopperState getState() {
+    return hopperState;
   }
   
   /**
@@ -77,8 +70,8 @@ public class Indexer extends SubsystemBase {
    * 
    * @param state the state to set the indexer to
    */
-  public void setState(IndexerState state) {
-    indexerState = state;
+  public void setState(HopperState state) {
+    hopperState = state;
   }
 
   /**
@@ -88,12 +81,10 @@ public class Indexer extends SubsystemBase {
    * 
    * @param speed the speed to set the indexer to (-1 to 1)
    */
-  public void setindexerSpeed(double speed) {
-    indexer.set(speed);
-  }
+  
 
-  public void setkickerSpeed(double speed) {
-    kicker.set(speed);
+  public void sethopperSpeed(double speed) {
+    hopper.set(speed);
   }
 
   
@@ -108,9 +99,9 @@ public class Indexer extends SubsystemBase {
   }
 
 
-  public boolean isFuelIn() {
-    return INDEXERCANRANGE.getDistance().getValueAsDouble() < 0.15 ;
-  }
+  // public boolean isFuelIn() {
+  //   return INDEXERCANRANGE.getDistance().getValueAsDouble() < 0.15 ;
+  // }
 
   /**
    * Check to see if the indexer is aligned with the branch.
@@ -127,20 +118,20 @@ public class Indexer extends SubsystemBase {
   @Override
   public void periodic() {
     // SmartDashboard.putNumber("CanRange Distance Detected", branchCANRange.getDistance().getValueAsDouble());
-    SmartDashboard.putNumber("Indexer Current", kicker.getSupplyCurrent().getValueAsDouble());
-    SmartDashboard.putString("Indexer Status", String.valueOf(kicker.getSupplyCurrent().getValueAsDouble()));
-    SmartDashboard.putBoolean("Has Fuel", isFuelIn());
+    SmartDashboard.putNumber("Indexer Current", hopper.getSupplyCurrent().getValueAsDouble());
+    SmartDashboard.putString("Indexer Status", String.valueOf(hopper.getSupplyCurrent().getValueAsDouble()));
+    // SmartDashboard.putBoolean("Has Fuel", isFuelIn());
     
 
 
 
     // Indexer State Machine
-    switch (indexerState) {
+    switch (hopperState) {
 
       // In the idle state, the indexer does not intake, and it isnt deactivated
       case IDLE:
 
-      setkickerSpeed(0);
+      sethopperSpeed(0);
       
 
       break;
@@ -149,32 +140,40 @@ public class Indexer extends SubsystemBase {
 
 
       case HAWCK:
-        if (isFuelIn() ) {
-          Timer.delay(.20);
-          setkickerSpeed(0);
-          hasFuel = true;
-        }
-        else if (!hasGamepiece()) {
-          setkickerSpeed(0.3);
-          setindexerSpeed(.3);
-        }
+        // if (isFuelIn() ) {
+        //   Timer.delay(.20);
+        //   setkickerSpeed(0);
+        //   hasFuel = true;
+        // }
+        // else if (!hasGamepiece()) {
+        //   setkickerSpeed(0.3);
+        //   setindexerSpeed(.3);
+        // }
         break;
 
       
       case TUHUA:
-        setkickerSpeed(0.3);
+
+      // if(hopper.getSupplyCurrent().getValueAsDouble()> 20){
+
+      //           sethopperSpeed(-1.0);
+      // }
+      // else
+      //   sethopperSpeed(0.3);
+      
+
+
         break;
 
       // In the passive state, the indexer will not intake, and will deactivate the intake. 
       //  This will be used when the indexer has a gamepiece
       case PASSIVE:
 
-      
+      if(hopper.getSupplyCurrent().getValueAsDouble()> 39)  {sethopperSpeed(.5);}
 
-      if(Flywheel.isAtVelocitySetpoint() == true){
-        setkickerSpeed(1);
-      }
-      else {setkickerSpeed (.0);}
+      else
+
+        sethopperSpeed(-0.5);      
         
 
         break;

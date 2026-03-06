@@ -6,6 +6,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Volts;
 
+import com.ctre.phoenix.led.RainbowAnimation;
 import com.pathplanner.lib.pathfinding.LocalADStar;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 
@@ -15,6 +16,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.Candle;
 
 
 /**
@@ -72,7 +74,10 @@ public class Robot extends TimedRobot {
     }
 
        @Override
-    public void disabledInit() {}
+    public void disabledInit() {
+
+
+    }
 
     @Override
     public void disabledPeriodic() {}
@@ -97,6 +102,12 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
+
+ 
+
+                  Candle.startRainbow();
+
+
         if (m_autonomousCommand != null) {
             CommandScheduler.getInstance().cancel(m_autonomousCommand);
         }

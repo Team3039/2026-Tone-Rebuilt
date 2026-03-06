@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.440444444444445,
-        "y": 7.582377777777777
+        "x": 4.44,
+        "y": 7.582
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.751414818228925,
-        "y": 7.469603521146917
+        "x": 4.75097037378448,
+        "y": 7.469225743369139
       },
       "isLocked": false,
       "linkedName": null
@@ -53,7 +53,7 @@
   "folder": "Depo side mid run",
   "idealStartingState": {
     "velocity": 0.0,
-    "rotation": -179.85745060191672
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }
