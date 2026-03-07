@@ -52,7 +52,7 @@ public class RobotContainer {
         public RobotContainer() {
 
                 NamedCommands.registerCommand("Depo side mid run start", drivetrain.runOnce(
-                                () -> drivetrain.resetPose(new Pose2d(4.440, 7.582, Rotation2d.fromDegrees(180.000)))));
+                          () -> drivetrain.resetPose(new Pose2d(4.440, 7.582, Rotation2d.fromDegrees(180.000)))));
 
                 autoChooser = AutoBuilder.buildAutoChooser(); // Auto chooser
                 SmartDashboard.putData("Auto Chooser", autoChooser);

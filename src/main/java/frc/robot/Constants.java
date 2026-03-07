@@ -44,7 +44,8 @@ public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKine
 
     public static final class Ports {
 //CLAW
-    public static final int INTAKE = 1;
+    public static final int INTAKE_L = 1;
+    public static final int INTAKE_R = 2;
     public static final int INDEXER = 14;
     public static final int INDEXERCANRANGE = 3;
     public static final int TURRET = 17;
