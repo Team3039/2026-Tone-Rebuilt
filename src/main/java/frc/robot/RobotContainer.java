@@ -38,7 +38,6 @@ import frc.robot.commands.movementCommands.TestShoot;
 import frc.robot.commands.movementCommands.hoodToPoint;
 import frc.robot.commands.movementCommands.hoodToZero;
 import frc.robot.commands.movementCommands.setTurretPosition;
-import frc.robot.commands.movementCommands.turretToHub;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Hopper;
@@ -88,7 +87,7 @@ public class RobotContainer {
         private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric()
                         .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
-        /* Path follower */
+        /* Path follower */   
         // private final SendableChooser<Command> autoChooser;
 
         private void configureBindings() {

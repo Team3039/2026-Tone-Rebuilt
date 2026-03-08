@@ -83,7 +83,8 @@ public class IntakeRoller extends SubsystemBase {
     claw.set(speed);
   }
 
-  
+  ///fdgdgfdxgfdhgfdggrdf
+  /// gfgggg
 
   /** 
    * Check to see whether the intake has either gamepiece
@@ -126,21 +127,13 @@ public class IntakeRoller extends SubsystemBase {
 
 
 
-      // In the coral state, the claw will spin in reverse to intake coral,
-      //  deactivating if the coralCANRange detects an object
+    
       case Intake:
        
           setWheelSpeed(0.5);
        
 
-      // In the algae state, the claw will spin forwards to intake algae, 
-      //  deactivating if the current exceeds 10 amps
-     
-
-      // In the release state, the claw will spin forwards to release the gamepiece
-      //  and will release the deactivation lock
     
-
         case OutTake:
         setWheelSpeed(-0.5);
        

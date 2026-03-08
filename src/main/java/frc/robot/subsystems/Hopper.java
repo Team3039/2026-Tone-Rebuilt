@@ -13,175 +13,132 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-
+/**
+ * מערכת משנה האחראית על ההופר / אינדקסר (Hopper / Indexer)
+ */
 public class Hopper extends SubsystemBase {
 
-
-  // Create the possible states of the indexer
-  public enum HopperState {
-    IDLE,
-    PASSIVE,
-    HAWCK,
-    TUHUA,
-  }
-
-  // Create a variable to store the current state of the indexer
-  HopperState hopperState = HopperState.IDLE;
-
-  // Keep track of whether or not the intake has a coral
-  public boolean hasFuel = false;
-
-
-  // Create a talonfx for the indexer
-  TalonFX hopper = new TalonFX(Constants.Ports.HOPPER);
-
-
-  // This CANrange is used to detect coral in the intake
-  // CANrange INDEXERCANRANGE = new CANrange(Constants.Ports.INDEXERCANRANGE);
-
-
-  // Indexer Constructor
-  public Hopper() {
-
-    // Create a talonfx configurator.
-    TalonFXConfiguration indexerConfig = new TalonFXConfiguration();
-
-    // Inverted and Neutral Modes
-    indexerConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    indexerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-
-    // Apply the configurator to the indexer motor
-    hopper.getConfigurator().apply(indexerConfig);
-
-  }
-    // Create a CANrange configurator
-
-  /**
-   * Get the current state of the indexer
-   * 
-   * @return the current state of the indexer as a IndexerState
-   */
-  public HopperState getState() {
-    return hopperState;
-  }
-  
-  /**
-   * Set the state of the indexer
-   * 
-   * @param state the state to set the indexer to
-   */
-  public void setState(HopperState state) {
-    hopperState = state;
-  }
-
-  /**
-   * Set the speed of the indexer
-   * <p>
-   * Positive values will intake algae, negative values will intake coral
-   * 
-   * @param speed the speed to set the indexer to (-1 to 1)
-   */
-  
-
-  public void sethopperSpeed(double speed) {
-    hopper.set(speed);
-  }
-
-  
-
-  /** 
-   * Check to see whether the intake has either gamepiece
-   * 
-   * @return true if the intake has either gamepiece, false otherwise
-   */
-  public boolean hasGamepiece() {
-    return hasFuel;
-  }
-
-
-  // public boolean isFuelIn() {
-  //   return INDEXERCANRANGE.getDistance().getValueAsDouble() < 0.15 ;
-  // }
-
-  /**
-   * Check to see if the indexer is aligned with the branch.
-   * It does this by checking the distance detected by the branchCANRange.
-   * If it detects an object closer than 0.5 meters, it is likely the branch, and thus we are aligned.
-   * 
-   * @return true if the indexer is aligned with the branch, false otherwise
-   */
-  
-
-
-
-
-  @Override
-  public void periodic() {
-    // SmartDashboard.putNumber("CanRange Distance Detected", branchCANRange.getDistance().getValueAsDouble());
-    SmartDashboard.putNumber("Indexer Current", hopper.getSupplyCurrent().getValueAsDouble());
-    SmartDashboard.putString("Indexer Status", String.valueOf(hopper.getSupplyCurrent().getValueAsDouble()));
-    // SmartDashboard.putBoolean("Has Fuel", isFuelIn());
-    
-
-
-
-    // Indexer State Machine
-    switch (hopperState) {
-
-      // In the idle state, the indexer does not intake, and it isnt deactivated
-      case IDLE:
-
-      sethopperSpeed(0);
-      
-
-      break;
-
-
-
-
-      case HAWCK:
-        // if (isFuelIn() ) {
-        //   Timer.delay(.20);
-        //   setkickerSpeed(0);
-        //   hasFuel = true;
-        // }
-        // else if (!hasGamepiece()) {
-        //   setkickerSpeed(0.3);
-        //   setindexerSpeed(.3);
-        // }
-        break;
-
-      
-      case TUHUA:
-
-      // if(hopper.getSupplyCurrent().getValueAsDouble()> 20){
-
-      //           sethopperSpeed(-1.0);
-      // }
-      // else
-      //   sethopperSpeed(0.3);
-      
-
-
-        break;
-
-      // In the passive state, the indexer will not intake, and will deactivate the intake. 
-      //  This will be used when the indexer has a gamepiece
-      case PASSIVE:
-
-      if(hopper.getSupplyCurrent().getValueAsDouble()> 39)  {sethopperSpeed(.5);}
-
-      else
-
-        sethopperSpeed(-0.5);      
-        
-
-        break;
+    // מצבי אפשריים של ההופר / האינדקסר
+    public enum HopperState {
+        IDLE,      // במצב המתנה
+        PASSIVE,   // מצב פסיבי / החזקה
+        HAWCK,     // (שם לא ברור – אולי "הכנס" או פעולה ספציפית?)
+        TUHUA,     // (שם לא ברור – אולי "שחרר" או פעולה ספציפית?)
     }
-  
 
+    // משתנה ששומר את המצב הנוכחי של ההופר
+    HopperState hopperState = HopperState.IDLE;
 
-    
+    // האם יש חפץ משחק (דלק / קורל) בהופר כרגע
+    public boolean hasFuel = false;
 
-  }
+    // מנוע TalonFX של ההופר
+    TalonFX hopper = new TalonFX(Constants.Ports.HOPPER);
+
+    // חיישן CANrange לאיתור קורל בהופר (כרגע מוסתר)
+    // CANrange INDEXERCANRANGE = new CANrange(Constants.Ports.INDEXERCANRANGE);
+
+    /**
+     * בנאי של מערכת ההופר
+     */
+    public Hopper() {
+        // יצירת אובייקט הגדרות למנוע
+        TalonFXConfiguration config = new TalonFXConfiguration();
+
+        // כיוון סיבוב והתנהגות במצב נייטרלי
+        config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+        // החלת ההגדרות על המנוע
+        hopper.getConfigurator().apply(config);
+    }
+
+    /**
+     * מחזיר את המצב הנוכחי של ההופר
+     * 
+     * @return המצב הנוכחי מסוג HopperState
+     */
+    public HopperState getState() {
+        return hopperState;
+    }
+
+    /**
+     * משנה את המצב של ההופר
+     * 
+     * @param state המצב החדש
+     */
+    public void setState(HopperState state) {
+        hopperState = state;
+    }
+
+    /**
+     * מגדיר את מהירות המנוע של ההופר
+     * <p>
+     * ערכים חיוביים → הכנסת אצות (algae)<br>
+     * ערכים שליליים → הכנסת קורל (coral)
+     * 
+     * @param speed מהירות בין -1.0 ל-1.0
+     */
+    public void setHopperSpeed(double speed) {
+        hopper.set(speed);
+    }
+
+    /**
+     * בודק האם קיים חפץ משחק בהופר
+     * 
+     * @return true אם יש חפץ, false אחרת
+     */
+    public boolean hasGamepiece() {
+        return hasFuel;
+    }
+
+    // דוגמה לחיישן עתידי (מוסתר כרגע)
+    // public boolean isFuelIn() {
+    //     return INDEXERCANRANGE.getDistance().getValueAsDouble() < 0.15;
+    // }
+
+    @Override
+    public void periodic() {
+        // עדכון לוח בקרה חכם
+        SmartDashboard.putNumber("זרם ההופר (אמפר)", hopper.getSupplyCurrent().getValueAsDouble());
+        SmartDashboard.putString("מצב ההופר", hopperState.toString());
+        // SmartDashboard.putBoolean("יש דלק", isFuelIn());
+
+        // מכונת מצבים של ההופר
+        switch (hopperState) {
+            case IDLE:
+                setHopperSpeed(0);
+                break;
+
+            case HAWCK:
+                // לוגיקה ישנה (מוסתרת):
+                // if (isFuelIn()) {
+                //     Timer.delay(0.20);
+                //     setkickerSpeed(0);
+                //     hasFuel = true;
+                // } else if (!hasGamepiece()) {
+                //     setkickerSpeed(0.3);
+                //     setindexerSpeed(0.3);
+                // }
+                break;
+
+            case TUHUA:
+                // לוגיקה ישנה (מוסתרת):
+                // if (hopper.getSupplyCurrent().getValueAsDouble() > 20) {
+                //     setHopperSpeed(-1.0);
+                // } else {
+                //     setHopperSpeed(0.3);
+                // }
+                break;
+
+            case PASSIVE:
+                // מצב פסיבי – החזקה עדינה או תיקון
+                if (hopper.getSupplyCurrent().getValueAsDouble() > 39) {
+                    setHopperSpeed(0.5);   // דחיפה קלה נגד עומס
+                } else {
+                    setHopperSpeed(-0.5);  // משיכה עדינה להחזקה
+                }
+                break;
+        }
+    }
 }

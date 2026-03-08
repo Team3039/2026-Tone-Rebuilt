@@ -98,13 +98,6 @@ public class Flywheel extends SubsystemBase {
         dissierdshooterspeed.put(4.1, 4.7); 
     }
 
-  
-  
-    double Distance = getDistanceFromHub();
-
-    double result = dissierdshooterspeed.get(Distance); 
-    
-
 
 
 
@@ -115,7 +108,7 @@ public class Flywheel extends SubsystemBase {
         double currentVelocity = shooterLeft.getRotorVelocity().getValueAsDouble();
 
         SmartDashboard.putNumber("Shooter RPS", currentVelocity);
-        SmartDashboard.putNumber("result RPS", result);
+        // SmartDashboard.putNumber("result RPS", result);
 
         SmartDashboard.putBoolean("Shooter At Setpoint", isAtVelocitySetpoint());
         SmartDashboard.putString("Flywheel State", flywheelState.name());
@@ -135,6 +128,12 @@ public class Flywheel extends SubsystemBase {
                 break;
 
                 case TRACKING:
+
+                double Distance = getDistanceFromHub();
+
+                double result = dissierdshooterspeed.get(Distance); 
+
+
                 setShooterVelocity( result);
                 break;
 
